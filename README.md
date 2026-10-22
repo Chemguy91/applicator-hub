@@ -13,16 +13,18 @@ Text is pulled out of PDFs and Word files in the admin's browser, split into ~90
 
 ## Accounts and roles
 
-Anyone with the link can create an account, but new accounts are **waiting** until an admin approves them under Manage → Team. Roles: waiting, applicator (search and read), admin (upload and manage).
+There is no self sign-up. Admins add people under **Manage → Team** (name, email, starting password, access level), reset passwords, change access, or remove people there. Everyone can change their own password from the **Password** link at the top. Access levels: applicator (search and read), admin (also uploads and manages people), no access.
+
+The `admin-users` edge function does the account work with the service key, after checking the caller is an admin.
 
 ## Setup
 
 1. Create a Supabase project and run `supabase/migrations/001_hub_schema.sql`.
-2. Deploy the two edge functions with JWT verification **off** (they check the user themselves).
+2. Deploy the three edge functions (`ingest`, `ask`, `admin-users`) with JWT verification **off** (they check the user themselves).
 3. Add the edge function secret `ANTHROPIC_API_KEY` (optional `ANSWER_MODEL`, default `claude-sonnet-5-5`).
-4. In Auth settings, turn off "Confirm email" (admin approval already gates access) or add custom SMTP.
+4. In Auth settings, turn off **Allow new users to sign up** and **Confirm email**, and set Site URL to the live address.
 5. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_KEY` (publishable key) in Vercel, root directory `web`.
-6. Sign up, then make yourself admin once:
+6. Create the first admin in the Supabase dashboard (Authentication → Users → Add user → Create new user, auto-confirm), then:
    `update profiles set role = 'admin' where email = 'you@example.com';`
 
 ## Local development
