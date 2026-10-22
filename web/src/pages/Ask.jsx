@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { supabase, openDocument, fetchDocument } from "../supabase.js";
-import { stripHeader } from "../util.js";
+import { stripHeader, bestAnswer, highlightParts } from "../util.js";
 
 const STARTERS = [
   "What PPE do I need for fogging?",
   "Re-entry time after application?",
   "How do I calibrate the applicator?",
 ];
+
+function Highlighted({ text, terms }) {
+  return highlightParts(text, terms).map((p, i) => (p.mark ? <mark key={i}>{p.text}</mark> : <React.Fragment key={i}>{p.text}</React.Fragment>));
+}
 
 // Minimal, safe formatter: paragraphs, "- " bullets, **bold**, and [n] citations.
 function Formatted({ text, onCite, max }) {
@@ -49,6 +53,7 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
   const [helpful, setHelpful] = useState(null);
   const [flash, setFlash] = useState(null);
   const [titleHits, setTitleHits] = useState([]);
+  const [showAll, setShowAll] = useState(false);
   const sourceRefs = useRef({});
 
   useEffect(() => {
@@ -66,7 +71,7 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
   const ask = async (question) => {
     const text = (question ?? q).trim();
     if (text.length < 2 || busy) return;
-    setBusy(true); setError(null); setResult(null); setHelpful(null); setTitleHits([]);
+    setBusy(true); setError(null); setResult(null); setHelpful(null); setTitleHits([]); setShowAll(false);
     const words = text.replace(/[%,()]/g, " ").split(/\s+/).filter((w) => w.length > 3).slice(0, 5);
     const titleQuery = words.length
       ? supabase.from("documents").select("*").eq("status", "ready").or(words.map((w) => `title.ilike.%${w}%`).join(",")).limit(5)
@@ -113,6 +118,12 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
     return [...map.values()].slice(0, 6);
   })();
 
+  const best = result && result.mode !== "answer" ? bestAnswer(result.question, result.sources) : null;
+  const otherSources = !result ? [] : result.mode === "answer"
+    ? result.sources
+    : result.sources.filter((s) => !(best?.strong && result.found && s.n === best.source.n));
+  const visibleSources = showAll ? otherSources : otherSources.slice(0, 3);
+
   const firstName = (profile.full_name || "").split(" ")[0];
   const suggestions = recent.length ? recent : STARTERS;
 
@@ -147,10 +158,10 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
           <section className="section" aria-live="polite">
             <div className="answer">
               <p className="answer-q">{result.question}</p>
-              {result.answer && result.found && (
+              {result.mode === "answer" && result.answer && result.found && (
                 <Formatted text={result.answer} onCite={cite} max={result.sources.length} />
               )}
-              {!result.found && (
+              {result.mode === "answer" && !result.found && (
                 <>
                   <h3>Not in the documents yet</h3>
                   <p className="muted" style={{ marginTop: 6 }}>
@@ -159,11 +170,33 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
                   {result.answer && <div style={{ marginTop: 10 }}><Formatted text={result.answer} onCite={cite} max={result.sources.length} /></div>}
                 </>
               )}
-              {result.found && !result.answer && (
-                <p>{result.note ?? "Here are the passages that best match your question."}</p>
+              {result.mode !== "answer" && best && (best.strong && result.found ? (
+                <>
+                  <p className="best-label">Best match</p>
+                  <blockquote className="best-quote"><Highlighted text={best.sentences.join(" ")} terms={best.terms} /></blockquote>
+                  <p className="best-source">
+                    From <strong>{best.source.title}</strong>{best.source.page ? `, page ${best.source.page}` : ""}
+                  </p>
+                  <button className="btn" style={{ marginTop: 12 }} onClick={() => open(best.source)}>
+                    {best.source.page ? `Open page ${best.source.page}` : "Open document"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h3>No exact match</h3>
+                  <p className="muted" style={{ marginTop: 6 }}>
+                    Your documents don't seem to mention that directly. The closest passages are below — or try other words. This question has been logged so the right document can be added.
+                  </p>
+                </>
+              ))}
+              {result.mode !== "answer" && !best && (
+                <>
+                  <h3>Nothing to search yet</h3>
+                  <p className="muted" style={{ marginTop: 6 }}>No documents have been added. Once your manager uploads them, you can ask here.</p>
+                </>
               )}
-              {result.note && result.answer && <p className="notice" style={{ marginTop: 12 }}>{result.note}</p>}
-              {result.mode === "answer" && result.found && (
+              {result.note && <p className="notice" style={{ marginTop: 12 }}>{result.note}</p>}
+              {result.found && (result.mode === "answer" || best?.strong) && (
                 <div className="feedback">
                   Did this answer it?
                   <button aria-pressed={helpful === true} onClick={() => rate(true)}>Yes</button>
@@ -190,19 +223,26 @@ export default function Ask({ profile, initialQuestion, onConsumed }) {
             </section>
           )}
 
-          {result.sources.length > 0 && (
+          {otherSources.length > 0 && (
             <section className="section">
-              <h2>Where this comes from</h2>
+              <h2>{result.mode === "answer" ? "Where this comes from" : best?.strong && result.found ? "Other matches" : "Closest passages"}</h2>
               <div className="list">
-                {result.sources.map((s) => (
+                {visibleSources.map((s) => (
                   <button key={s.n} ref={(el) => (sourceRefs.current[s.n] = el)} className={`source ${flash === s.n ? "flash" : ""}`} onClick={() => open(s)}>
                     <span className="source-n">{s.n}</span>
                     <span className="source-title">{s.title}</span>
                     <span className="source-meta">{s.page ? `Page ${s.page}` : s.category}. Tap to open</span>
-                    <span className="source-snippet">{stripHeader(s.snippet)}</span>
+                    <span className="source-snippet">
+                      <Highlighted text={stripHeader(s.content ?? s.snippet).slice(0, 300)} terms={best?.terms} />
+                    </span>
                   </button>
                 ))}
               </div>
+              {otherSources.length > visibleSources.length && (
+                <button className="btn secondary block" style={{ marginTop: 10 }} onClick={() => setShowAll(true)}>
+                  Show {otherSources.length - visibleSources.length} more
+                </button>
+              )}
             </section>
           )}
         </>

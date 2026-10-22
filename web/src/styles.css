@@ -257,3 +257,13 @@ p { margin: 0; }
   .ask-tag { padding: 24px 22px 20px; }
   .ask-tag h1 { font-size: 34px; }
 }
+
+/* ---------- free answer mode: best match ---------- */
+.best-label { font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--field); margin-bottom: 6px; }
+.best-quote {
+  margin: 0; padding: 4px 0 4px 14px;
+  border-left: 4px solid var(--tag);
+  font-size: 19px; line-height: 1.45;
+}
+.best-source { margin-top: 10px; font-size: 15px; color: var(--muted); }
+mark { background: rgba(245, 197, 24, 0.5); background: color-mix(in srgb, var(--tag) 55%, transparent); color: inherit; border-radius: 3px; padding: 0 2px; }

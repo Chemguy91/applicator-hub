@@ -87,11 +87,28 @@ Deno.serve(async (req) => {
     category: h.category,
     page: h.page,
     snippet: h.content.slice(0, 280),
+    content: h.content.replace(/^\[[^\]]*\]\n/, "").slice(0, 1600),
   }));
+
+  // Does any passage actually contain the question's key words?
+  // Meaning-based search always returns *something*, so this decides "found" when no AI is writing answers.
+  const STOP = new Set("the a an and or of to in on for with at by from is are was were be been it its this that these those what which who whom how when where why do does did can could should would will shall may might must i me my we our you your they them their there here about into than then so if not no any all some much many more most per after before during over under up down out off".split(" "));
+  const SYNONYMS: Record<string, string[]> = {
+    ppe: ["respir", "glove", "goggl", "protec", "coverall"], rei: ["re-en", "reent", "entry"],
+    "re-entry": ["reent", "entry"], sds: ["safet", "hazar"], msds: ["safet", "hazar"],
+    temp: ["tempe"], cipc: ["chlor"], calibrate: ["calib"], dose: ["rate", "dosag"],
+  };
+  const words = [...new Set(question.toLowerCase().match(/[a-z0-9][a-z0-9-]*/g) ?? [])]
+    .filter((t) => !STOP.has(t) && (t.length > 2 || /\d/.test(t)));
+  const terms = words.flatMap((t) => [t.length > 5 ? t.slice(0, 5) : t, ...(SYNONYMS[t] ?? [])]);
+  const keywordHit = terms.length === 0 || results.some((h) => {
+    const text = h.content.toLowerCase();
+    return terms.some((t) => text.includes(t));
+  });
 
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   let answer: string | null = null;
-  let found = results.length > 0;
+  let found = results.length > 0 && keywordHit;
   let mode: "answer" | "search" = "search";
   let note: string | undefined;
 
@@ -131,6 +148,7 @@ Deno.serve(async (req) => {
           found = false;
           answer = text.replace(/^NOT_FOUND\s*/, "").trim() || null;
         } else {
+          found = true;
           answer = text;
         }
       }
@@ -138,8 +156,6 @@ Deno.serve(async (req) => {
       note = "Couldn't reach the answer service. Showing matching passages instead.";
       console.error(e);
     }
-  } else if (results.length && !apiKey) {
-    note = "AI answers aren't switched on yet, so here are the best-matching passages.";
   }
 
   const admin = createClient(url, service);
