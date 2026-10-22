@@ -30,16 +30,6 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
-create or replace function public.current_role_name()
-returns text
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select role from public.profiles where id = (select auth.uid());
-$$;
-
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -179,10 +169,10 @@ with full_text as (
 loose_text as (
   -- OR-matching so one missing word doesn't hide a passage
   select c.id,
-         row_number() over (order by ts_rank_cd(c.fts, q) desc) as rank_ix
-  from public.chunks c,
-       replace(plainto_tsquery('english', query_text)::text, ' & ', ' | ')::tsquery q
-  where numnode(q) > 0 and c.fts @@ q
+         row_number() over (order by ts_rank_cd(c.fts, qq.q) desc) as rank_ix
+  from public.chunks c
+  cross join (select replace(plainto_tsquery('english', query_text)::text, ' & ', ' | ')::tsquery as q) qq
+  where numnode(qq.q) > 0 and c.fts @@ qq.q
   order by rank_ix
   limit least(match_count, 30) * 2
 ),
@@ -229,3 +219,13 @@ create policy "admins update files" on storage.objects
 create policy "admins delete files" on storage.objects
   for delete to authenticated
   using (bucket_id = 'documents' and (select public.is_admin()));
+
+-- ---------- lock down function access ----------
+-- (current_role_name() exists in the live database from an earlier draft; it is unused and has no execute grants)
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.is_admin() from public, anon;
+revoke execute on function public.is_member() from public, anon;
+grant execute on function public.is_admin() to authenticated;
+grant execute on function public.is_member() to authenticated;
+revoke execute on function public.hybrid_search(text, extensions.vector, int, float, float, int) from public, anon;
+grant execute on function public.hybrid_search(text, extensions.vector, int, float, float, int) to authenticated;
