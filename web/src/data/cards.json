@@ -45,7 +45,13 @@
     ]
    }
   ],
-  "processing": null,
+  "processing": {
+   "sheet_name": "DMN",
+   "tip_temp_f": 450,
+   "volume": "5 GALS/Hour",
+   "airflow": "200-300 CFM",
+   "same_as": "DMN"
+  },
   "id": "1-4sight",
   "group": "sprout",
   "shutdown": "standby-24"
@@ -214,7 +220,13 @@
     ]
    }
   ],
-  "processing": null,
+  "processing": {
+   "sheet_name": "Storox/Perox",
+   "tip_temp_f": 275,
+   "volume": "10 GALS Per Hour",
+   "airflow": "500-600 CFM",
+   "same_as": "Storox/Perox"
+  },
   "id": "jetag",
   "group": "sanitizer",
   "shutdown": "no-shutdown"
@@ -307,7 +319,13 @@
     ]
    }
   ],
-  "processing": null,
+  "processing": {
+   "sheet_name": "Purogene Pro",
+   "tip_temp_f": 150,
+   "volume": "15-20 GALS/Hour",
+   "airflow": "50% Air",
+   "same_as": "Purogene Pro"
+  },
   "id": "purogene",
   "group": "sanitizer",
   "shutdown": "no-shutdown"
@@ -448,7 +466,13 @@
     ]
    }
   ],
-  "processing": null,
+  "processing": {
+   "sheet_name": "Storox/Perox",
+   "tip_temp_f": 275,
+   "volume": "10 GALS Per Hour",
+   "airflow": "500-600 CFM",
+   "same_as": "Storox/Perox"
+  },
   "id": "sanidate-5-0",
   "group": "sanitizer",
   "shutdown": "no-shutdown"

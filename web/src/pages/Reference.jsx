@@ -140,7 +140,10 @@ function Detail({ card, onSelect, onBack }) {
           <>
             <Settings s={p} />
             <p className="processing-note">
-              At the tip of the Sprout-Nip machine. Listed on the processing sheet as “{p.sheet_name}”.
+              At the tip of the Sprout-Nip machine.{" "}
+              {p.same_as
+                ? <>Uses the same settings as “{p.same_as}” on the processing sheet.</>
+                : <>Listed on the processing sheet as “{p.sheet_name}”.</>}
             </p>
             {p.combos?.length > 0 && (
               <div className="combos">
