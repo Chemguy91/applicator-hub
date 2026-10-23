@@ -431,3 +431,113 @@ a.btn { text-decoration: none; }
 .rs-edit-item { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
 .rs-edit-item:last-child { border-bottom: 0; }
 .rs-edit-item input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--red); flex: none; }
+
+/* ---------- demo game ---------- */
+.demo { max-width: 560px; margin: 0 auto; }
+.sng-top {
+  position: sticky; top: var(--sng-top, 0px); z-index: 5;
+  background: var(--paper); padding: 8px 0 10px; margin-top: -8px;
+  box-shadow: 0 10px 12px -12px rgba(34, 22, 22, .35);
+}
+.shell .sng-top { --sng-top: 62px; } /* below the app bar */
+.sng-stage {
+  position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line);
+  background: #2b2422; width: fit-content; max-width: 100%; margin: 0 auto;
+}
+.sng-canvas { display: block; touch-action: manipulation; }
+.sng-hint {
+  margin: 8px 0 0; padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--red-soft); font-weight: 600; font-size: 15px; line-height: 1.3; min-height: 40px;
+}
+.sng-cov { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.sng-cov-label { font-weight: 600; white-space: nowrap; }
+.sng-pct { font-family: var(--display); font-size: 22px; margin-left: 4px; }
+.sng-bars { display: flex; gap: 4px; flex: 1; max-width: 220px; }
+.sng-bar { flex: 1; height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
+.sng-bar > span { display: block; height: 100%; width: 0; background: var(--red); }
+.sng-controls { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.sng-group {
+  display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 10px 12px;
+}
+.sng-step {
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  border: 2px solid var(--ink); font-family: var(--display); font-weight: 700;
+}
+.sng-body { min-width: 0; }
+.sng-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sng-label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.sng-val { font-family: var(--display); font-weight: 700; font-size: 18px; margin-left: 4px; color: #2f6b3a; }
+.sng-val.off { color: var(--red-deep); }
+.sng-target { float: right; font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+.sng-slider input[type="range"] { width: 100%; accent-color: var(--red); height: 28px; }
+.sng-lbs { font-weight: 600; }
+.sng-lbs.low { color: var(--red-deep); }
+.sng-switches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sng-switch {
+  border: 1.5px solid var(--line); background: var(--surface); border-radius: var(--radius-sm);
+  min-height: 44px; font-weight: 700; cursor: pointer; padding: 0 12px;
+}
+.sng-switch[aria-pressed="true"] { background: #2f6b3a; border-color: #2f6b3a; color: #fff; }
+.sng-pump { min-width: 150px; }
+.sng-note { margin-top: 12px; font-size: 14px; color: var(--muted); }
+.sng-done {
+  position: absolute; inset: 8px; overflow: auto; background: var(--surface); color: var(--ink);
+  border-radius: var(--radius-sm); padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.35); text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+}
+.sng-done[hidden] { display: none; }
+.sng-done h3 { font-size: 22px; margin: 0 0 6px; }
+.sng-done ul { list-style: none; padding: 0; margin: 0 0 10px; font-size: 14px; line-height: 1.35; }
+.sng-done .btn { min-height: 44px; }
+.sng-stars { font-size: 24px; color: #e0a800; letter-spacing: 4px; margin: 0; }
+
+/* ---------- demo: step tags (game) ---------- */
+.sng-tag { display: block; font-size: 12px; font-weight: 600; color: var(--red-deep); margin-bottom: 6px; line-height: 1.3; }
+
+/* ---------- demo: guided step card ---------- */
+.sng-card {
+  margin-top: 8px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--red);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  max-height: 34vh; overflow-y: auto;
+}
+.sng-card-head { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.sng-card-miss { color: var(--red-deep); }
+.sng-card-title { font-size: 21px; margin: 2px 0 4px; }
+.sng-card-text { font-size: 15px; line-height: 1.4; }
+.sng-card-flash { margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--red-deep); background: var(--red-soft); border-radius: 6px; padding: 6px 8px; }
+.sng-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+.sng-card-or { font-size: 13px; color: var(--muted); }
+.sng-chip {
+  border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); border-radius: 999px;
+  padding: 8px 14px; font-weight: 600; font-size: 15px; cursor: pointer; min-height: 40px; text-align: left;
+}
+.sng-chip-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.sng-card-full { margin-top: 8px; font-size: 14px; color: var(--muted); }
+.sng-card-full summary { cursor: pointer; font-weight: 600; }
+.sng-card-full p { margin-top: 4px; line-height: 1.45; }
+.sng-card-progress { height: 4px; background: var(--line); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.sng-card-progress span { display: block; height: 100%; background: var(--red); }
+.sng-card-fan { width: 100%; }
+.sng-card-fan input { width: 100%; accent-color: var(--red); height: 28px; }
+.sng-anemo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+.sng-anemo span { border: 1.5px solid var(--line); border-radius: 6px; padding: 4px; font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--red-deep); }
+.sng-anemo span.ok { color: #2f6b3a; border-color: #2f6b3a; }
+.sng-anemo small { display: block; font-family: var(--body); font-weight: 600; font-size: 11px; color: var(--muted); }
+.sng-post {
+  display: flex; flex-direction: column; text-align: left; width: 100%; gap: 1px;
+  border: 1.5px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 14px;
+}
+.sng-post strong { font-size: 15px; }
+.sng-post.on { border-color: #2f6b3a; background: var(--ok-soft); }
+.sng-post.on strong::before { content: "✓ "; color: #2f6b3a; }
+.sng-guided .sng-controls[hidden], .sng-cov[hidden] { display: none; }
+/* guided: denser controls so they fit under the pinned picture */
+.sng-guided .sng-controls { gap: 6px; margin-top: 8px; }
+.sng-guided .sng-group { grid-template-columns: 1fr; padding: 6px 10px; }
+.sng-guided .sng-group > .sng-step { display: none; }
+.sng-guided .sng-label { margin-bottom: 2px; font-size: 14px; }
+.sng-guided .sng-switch { min-height: 40px; }
+.sng-guided .btn.sng-pour { min-height: 40px; }
+.sng-card.compact .sng-card-title { font-size: 18px; }
+.sng-card.compact .sng-card-text { font-size: 14px; }

@@ -4,12 +4,14 @@ import Login from "./pages/Login.jsx";
 import Reference from "./pages/Reference.jsx";
 import Checklists from "./pages/Setup.jsx";
 const Results = lazy(() => import("./pages/Results.jsx"));
+const Demo = lazy(() => import("./pages/Demo.jsx"));
 
 function viewFromHash() {
   const h = location.hash;
   if (h === "#/results") return "results";
   if (h === "#/setup") return "setup";
   if (h === "#/post") return "post";
+  if (h === "#/demo") return "demo";
   return "ref";
 }
 
@@ -91,10 +93,15 @@ export default function App() {
           <a href="#/" aria-current={current === "ref" ? "page" : undefined}>Products</a>
           <a href="#/setup" aria-current={current === "setup" || current === "post" ? "page" : undefined}>Checklists</a>
           <a href="#/results" aria-current={current === "results" ? "page" : undefined}>Results</a>
+          <a href="#/demo" aria-current={current === "demo" ? "page" : undefined}>Demo</a>
         </div>
       </nav>
       <main className="shell">
-        {current === "results" ? (
+        {current === "demo" ? (
+          <Suspense fallback={<div className="thinking"><span className="spinner" />Loading…</div>}>
+            <Demo />
+          </Suspense>
+        ) : current === "results" ? (
           <Suspense fallback={<div className="thinking"><span className="spinner" />Loading…</div>}>
             <Results isAdmin={isAdmin} place={place} />
           </Suspense>
