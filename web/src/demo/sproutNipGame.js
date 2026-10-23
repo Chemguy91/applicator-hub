@@ -2,7 +2,7 @@
 // Two modes share one machine/fog simulation and one drawing:
 //   mode "game":   free play, each control tagged with its checklist step.
 //   mode "guided": the Operational Checklist in three phases (setup taps,
-//                  fogging, shutdown/clean-up + post treatment) with a score.
+//                  fogging, shutdown/clean-up + departure check) with a score.
 // Plain JS + canvas so it runs inside the app and as a standalone preview.
 import CHECKLISTS from "../data/checklist.json";
 
@@ -591,7 +591,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
       { label: "Tomorrow", ok: false, why: "The system comes back on within 4 to 5 hours after application." }])] },
     { n: 26, phase: 3, actions: [tap("Walk through: tap the storage to check nothing is left behind and the electrical room is clean.", { ...PILE, r: 70 }, "Walk through")] },
     { n: 27, phase: 3, actions: [tap("Always turn off the lights. Tap the light.", { ...BULB, r: 20 }, "Turn off the lights", () => { s.sc.lights = false; })] },
-    { n: "post", phase: 4, actions: [{ kind: "post", prompt: "Post treatment check list. Tap each item as you confirm it." }] },
+    { n: "post", phase: 4, actions: [{ kind: "post", prompt: "Departure check. Tap each item as you confirm it." }] },
   ];
 
   const cur = () => GUIDE[gi];
@@ -640,20 +640,20 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     renderCard();
   }
 
-  const PHASES = { 1: "Phase 1: Setup", 2: "Phase 2: Fogging", 3: "Phase 3: Shut down and clean up", 4: "Post treatment" };
+  const PHASES = { 1: "Phase 1: Setup", 2: "Phase 2: Fogging", 3: "Phase 3: Shut down and clean up", 4: "Departure check" };
   function renderCard() {
     if (!guided) return;
     const g = cur();
     if (!g) {
       card.replaceChildren(el("p", { class: "sng-card-phase" }, "Done"), el("h3", { class: "sng-card-title" }, "Nice work."),
-        el("p", { class: "sng-card-text" }, "Every setup step, the fogging, the clean up and the post-treatment checks are done."));
+        el("p", { class: "sng-card-text" }, "Every setup step, the fogging, the clean up and the departure checks are done."));
       controls.hidden = true; covRow.hidden = false;
       return;
     }
     const a = curAction();
     const stepNo = g.n === 12 ? driveStep : g.n;
     const info = typeof stepNo === "number" ? STEP_TEXT[stepNo] : null;
-    const title = g.n === "post" ? "Post Treatment Check List" : `${info.title}`;
+    const title = g.n === "post" ? "Departure Check" : `${info.title}`;
     const total = GUIDE.length;
     const head = el("div", { class: "sng-card-head" },
       el("span", { class: "sng-card-phase" }, `${PHASES[g.phase]}${typeof stepNo === "number" ? `: step ${stepNo} of 27` : ""}`),

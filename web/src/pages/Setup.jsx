@@ -4,12 +4,16 @@ import { supabase } from "../supabase.js";
 
 const STORE_KEY = "job-checklists-v1";
 const EMPTY = { done: { setup: {}, post: {} }, fields: {}, draftId: null, dirty: false };
-const FIELD_KEYS = ["fans", "refer", "heat", "doors", "panel_other", "fans_on", "fans_on_where", "heaters_on", "heaters_on_where"];
+// Every write-in on the checklist (step 2 boxes, step 14 questions), taken from checklist.json.
+export const FIELD_KEYS = CHECKLISTS.setup.steps.flatMap((s) => [
+  ...(s.fields || []).map((f) => f.id),
+  ...(s.questions || []).flatMap((q) => [q.id, `${q.id}_where`]),
+]);
 const fmtSaved = (t) => new Date(t).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 const toMarks = (arr) => Object.fromEntries((arr || []).map((n) => [n, true]));
 const LISTS = [
   { id: "setup", label: "Machine setup", numbered: true },
-  { id: "post", label: "Post treatment", numbered: false },
+  { id: "post", label: "Departure check", numbered: false },
 ];
 
 function load() {
@@ -32,6 +36,24 @@ export function Field({ id, label, value, onChange, type = "text" }) {
       )}
     </label>
   );
+}
+
+// Boxes for a step, under a small heading per group (e.g. Switches, Settings).
+export function StepFields({ defs, values, onChange }) {
+  const groups = [];
+  for (const f of defs) {
+    const g = f.type === "textarea" ? null : f.group ?? null;
+    const last = groups[groups.length - 1];
+    if (last && last.name === g && g !== null) last.items.push(f); else groups.push({ name: g, items: [f] });
+  }
+  return groups.map((g, i) => (
+    <div key={i} className="ck-group">
+      {g.name && <h4 className="ck-group-h">{g.name}</h4>}
+      <div className="ck-grid">
+        {g.items.map((f) => <Field key={f.id} id={f.id} label={f.label} type={f.type} value={values[f.id]} onChange={onChange} />)}
+      </div>
+    </div>
+  ));
 }
 
 export function YesNo({ id, label, fields, onChange }) {
@@ -147,7 +169,7 @@ export default function Checklists({ list, place }) {
     const setupLeft = CHECKLISTS.setup.steps.length - countFor("setup");
     const postLeft = CHECKLISTS.post.steps.length - countFor("post");
     if ((setupLeft || postLeft) && !confirm(
-      `Not everything is checked (${setupLeft} setup step${setupLeft === 1 ? "" : "s"}, ${postLeft} post-treatment item${postLeft === 1 ? "" : "s"}). Submit anyway? To finish later instead, tap Cancel, then Save progress.`)) return;
+      `Not everything is checked (${setupLeft} setup step${setupLeft === 1 ? "" : "s"}, ${postLeft} departure check item${postLeft === 1 ? "" : "s"}). Submit anyway? To finish later instead, tap Cancel, then Save progress.`)) return;
     setSending("submit");
     const r = await write("submitted");
     setSending(false);
@@ -180,7 +202,7 @@ export default function Checklists({ list, place }) {
                 <span className="ck-draft-main">
                   <strong>{d.customer}</strong>
                   <span>{d.storage}, {d.applicator}</span>
-                  <span className="muted small">Saved {fmtSaved(d.saved_at)}. Setup {d.setup_done.length}/{CHECKLISTS.setup.steps.length}, post {d.post_done.length}/{CHECKLISTS.post.steps.length}</span>
+                  <span className="muted small">Saved {fmtSaved(d.saved_at)}. Setup {d.setup_done.length}/{CHECKLISTS.setup.steps.length}, departure {d.post_done.length}/{CHECKLISTS.post.steps.length}</span>
                 </span>
                 {d.id === draftId
                   ? <span className="ck-draft-here">Open</span>
@@ -228,11 +250,7 @@ export default function Checklists({ list, place }) {
               <h3>{s.title}</h3>
               {s.text && <p>{s.text}</p>}
               {s.warning && <p className="ck-warning">{s.warning}</p>}
-              {s.fields && (
-                <div className="ck-grid">
-                  {s.fields.map((f) => <Field key={f.id} id={f.id} label={f.label} type={f.type} value={fields[f.id]} onChange={setField} />)}
-                </div>
-              )}
+              {s.fields && <StepFields defs={s.fields} values={fields} onChange={setField} />}
               {s.questions?.map((q) => <YesNo key={q.id} {...q} fields={fields} onChange={setField} />)}
             </div>
           </li>
@@ -240,7 +258,7 @@ export default function Checklists({ list, place }) {
       </ol>
 
       {meta.id === "setup" && countFor("setup") === steps.length && (
-        <a className="btn block" style={{ marginBottom: 16 }} href="#/post">Go to post treatment checklist</a>
+        <a className="btn block" style={{ marginBottom: 16 }} href="#/post">Go to departure check</a>
       )}
 
       <section className="panel ck-sign">

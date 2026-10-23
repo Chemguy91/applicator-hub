@@ -567,3 +567,17 @@ a.btn { text-decoration: none; }
 .btn.small { min-height: 40px; padding: 0 14px; font-size: 15px; flex: none; }
 .rs-badge.progress { background: var(--blue-soft); color: var(--blue); }
 .ck-sign .link-btn { min-height: 48px; }
+
+/* Checklist tabs: two side by side that always fit the screen. */
+.setup .group-tabs { overflow: visible; }
+.setup .group-tab { flex: 1 1 0; min-width: 0; text-align: center; padding: 7px 8px; border-radius: 16px; }
+@media (max-width: 400px) { .setup .group-tab { font-size: 14px; } }
+
+/* Four sections must fit small phones (320px) without sideways scrolling. */
+@media (max-width: 380px) {
+  .sections-inner { gap: 0; justify-content: space-between; }
+  .sections a { font-size: 15px; }
+}
+.ck-group + .ck-group { margin-top: 4px; }
+.ck-group-h { font-family: var(--display); font-size: 17px; font-weight: 700; margin: 12px 0 -4px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.ck-group:not(:has(.ck-group-h)) .ck-grid { margin-top: 4px; }

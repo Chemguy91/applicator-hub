@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase.js";
 import CHECKLISTS from "../data/checklist.json";
-import { Field, YesNo } from "./Setup.jsx";
+import { Field, YesNo, StepFields, FIELD_KEYS } from "./Setup.jsx";
+
+const PANEL = CHECKLISTS.setup.steps[1].fields;
 
 const fmtDate = (d) => (d ? new Date(`${d}T12:00:00`).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }) : "No date");
 const fmtTime = (t) => new Date(t).toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
-const LIST_NAME = { setup: "Machine setup", post: "Post treatment" };
+const LIST_NAME = { setup: "Machine setup", post: "Departure check" };
 
 function ListDetail({ list, doneIds }) {
   const done = new Set(doneIds);
@@ -44,10 +46,9 @@ function Editor({ r, onCancel, onSaved }) {
       setErr("Customer, storage and applicator can't be empty."); return;
     }
     setBusy(true); setErr(null);
-    const { fans, refer, heat, doors, panel_other, fans_on, fans_on_where, heaters_on, heaters_on_where } = f;
     const { error } = await supabase.from("checklist_submissions").update({
       customer: f.customer.trim(), storage: f.storage.trim(), applicator: f.applicator.trim(), job_date: f.date || null,
-      fields: { fans, refer, heat, doors, panel_other, fans_on, fans_on_where, heaters_on, heaters_on_where },
+      fields: Object.fromEntries(FIELD_KEYS.map((k) => [k, f[k]])),
       setup_done: [...done.setup].sort((a, b) => a - b), post_done: [...done.post].sort((a, b) => a - b),
     }).eq("id", r.id);
     setBusy(false);
@@ -63,9 +64,7 @@ function Editor({ r, onCancel, onSaved }) {
         <Field id="date" label="Date" type="date" value={f.date} onChange={set} />
       </div>
       <h4 className="rs-edit-h">Panel and VFD settings</h4>
-      <div className="ck-grid">
-        {CHECKLISTS.setup.steps[1].fields.map((x) => <Field key={x.id} id={x.id} label={x.label} type={x.type} value={f[x.id]} onChange={set} />)}
-      </div>
+      <StepFields defs={PANEL} values={f} onChange={set} />
       <h4 className="rs-edit-h">Top of the pile</h4>
       {CHECKLISTS.setup.steps[13].questions.map((q) => <YesNo key={q.id} {...q} fields={f} onChange={set} />)}
       {["setup", "post"].map((list) => (
@@ -106,17 +105,17 @@ function Row({ r, isAdmin, onDelete, onSaved }) {
         <span className="rs-badges">
           {r.status === "in_progress" && <span className="rs-badge progress">In progress</span>}
           <span className={`rs-badge ${setupOk ? "ok" : "warn"}`}>Setup {r.setup_done.length}/{r.setup_total}</span>
-          <span className={`rs-badge ${postOk ? "ok" : "warn"}`}>Post {r.post_done.length}/{r.post_total}</span>
+          <span className={`rs-badge ${postOk ? "ok" : "warn"}`}>Departure {r.post_done.length}/{r.post_total}</span>
         </span>
       </button>
       {open && !editing && (
         <div className="rs-detail">
           <dl className="rs-fields">
-            <div><dt>Panel: Fans</dt><dd>{f.fans || "—"}</dd></div>
-            <div><dt>Refer.</dt><dd>{f.refer || "—"}</dd></div>
-            <div><dt>Heat</dt><dd>{f.heat || "—"}</dd></div>
-            <div><dt>Doors</dt><dd>{f.doors || "—"}</dd></div>
-            <div className="full"><dt>Other details or settings</dt><dd className="rs-long">{f.panel_other || "—"}</dd></div>
+            {PANEL.map((x) => x.type === "textarea" ? (
+              <div key={x.id} className="full"><dt>{x.label}</dt><dd className="rs-long">{f[x.id] || "—"}</dd></div>
+            ) : (
+              <div key={x.id}><dt>{x.group ? `${x.group}: ${x.label}` : x.label}</dt><dd>{f[x.id] || "—"}</dd></div>
+            ))}
             <div className="wide"><dt>Fans on top of pile</dt><dd>{yn("fans_on")}</dd></div>
             <div className="wide"><dt>Heaters on top of pile</dt><dd>{yn("heaters_on")}</dd></div>
           </dl>

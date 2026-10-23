@@ -1,231 +1,250 @@
 {
- "setup": {
-  "title": "Sprout Inhibiting — Operational Checklist For New Machines",
-  "steps": [
-   {
-    "n": 1,
-    "title": "Arrival at Storage",
-    "text": "Confirm you are at the right location and write it on your Application Log Sheet."
-   },
-   {
-    "n": 2,
-    "title": "System – Panel and VFD Settings",
-    "text": "Make note of how the switches are and write the details here below.",
-    "warning": "BEFORE you shut anything down!",
-    "fields": [
-     {
-      "id": "fans",
-      "label": "Fans"
-     },
-     {
-      "id": "refer",
-      "label": "Refer."
-     },
-     {
-      "id": "heat",
-      "label": "Heat"
-     },
-     {
-      "id": "doors",
-      "label": "Doors"
-     },
-     {
-      "id": "panel_other",
-      "label": "Other details or settings",
-      "type": "textarea"
-     }
+  "setup": {
+    "title": "Sprout Inhibiting — Operational Checklist For New Machines",
+    "steps": [
+      {
+        "n": 1,
+        "title": "Arrival at Storage",
+        "text": "Confirm you are at the right location and write it on your Application Log Sheet."
+      },
+      {
+        "n": 2,
+        "title": "System – Panel and VFD Settings",
+        "text": "Make note of how the switches are and write the details here below.",
+        "warning": "BEFORE you shut anything down!",
+        "fields": [
+          {
+            "id": "fans",
+            "label": "Fans",
+            "group": "Switches"
+          },
+          {
+            "id": "refer",
+            "label": "Refer.",
+            "group": "Switches"
+          },
+          {
+            "id": "heat",
+            "label": "Heat",
+            "group": "Switches"
+          },
+          {
+            "id": "doors",
+            "label": "Doors",
+            "group": "Switches"
+          },
+          {
+            "id": "fan_speed",
+            "label": "Fan speed",
+            "group": "Settings"
+          },
+          {
+            "id": "run_clock",
+            "label": "Run clock",
+            "group": "Settings"
+          },
+          {
+            "id": "setting_other",
+            "label": "Other setting",
+            "group": "Settings"
+          },
+          {
+            "id": "panel_other",
+            "label": "Other details or settings",
+            "type": "textarea"
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "title": "Fogging Port",
+        "text": "Locate the fogging port on the storage and position application truck to line up with the fogging port."
+      },
+      {
+        "n": 4,
+        "title": "Ventilation System",
+        "text": "Turn the ventilation system off inside the control room at the control panel. Check the plenum and make sure climacell and plenum are dry. If they are not dry, contact your supervisor as application may need to wait."
+      },
+      {
+        "n": 5,
+        "title": "Fire Extinguisher",
+        "text": "Set Fire Extinguisher beside the truck."
+      },
+      {
+        "n": 6,
+        "title": "Power",
+        "text": "Locate power for the sprout-nip machine. The sprout-nip machine can be operated at either 240V or 480V. Confirm voltage using voltage tester. Once voltage is confirmed either 240V or 480V then connect power cord from the sprout-nip machine to the disconnect/receptacle on the fan house. Set the 240/480V switch located on the outside of the sprout-nip machine electrical panel to the correct voltage. Turn the power on and check for correct phase at the phase monitor. If the phase is not correct, disconnect power at the disconnect/receptacle on the fan house and switch any two phases and then reconnect the power and check phase monitor again. Once the correct phase is established, then turn all the breakers on which are located inside the electrical panel. Next - pull emergency switch out and turn blower on and test correct rotation of the blower."
+      },
+      {
+        "n": 7,
+        "title": "CIPC Melter Box",
+        "text": "Turn switches for the top and bottom heater elements to the “hand” position. Pour in 20-LBS of Sprout-Nip Pellets to begin melting pellets. Close top lid to begin warming cabinet."
+      },
+      {
+        "n": 8,
+        "title": "Fan Guards",
+        "text": "Locate the ventilation fans in the fan house and remove front fan guards. Turn power off to ventilation fans before removing front guards."
+      },
+      {
+        "n": 9,
+        "title": "Climacell",
+        "text": "Locate the climacell and determine where the bypass needs to be opened. Some climacell bypasses can be slid open. Others may have bypass doors on the sides or above the climacell."
+      },
+      {
+        "n": 10,
+        "title": "Refrigeration",
+        "text": "Determine if the storage has refrigeration and locate the refrigeration evaporator coils. Find the bypass doors for the evaporator coils and securely open."
+      },
+      {
+        "n": 11,
+        "title": "Plenum Bypass",
+        "text": "Make sure any bypasses at the end of the plenum are closed."
+      },
+      {
+        "n": 12,
+        "title": "Using the Storage Frequency Drives",
+        "text": "Locate the Frequency Drives for the ventilation fans and determine if you will be using them for the application. If that is the case, then you will want to control the speed from the storage control panel. Take note of the current control panel settings – then set the control panel so the fresh-air doors switch is in the “off” position. Also, turn the switches for the climacell, humidifiers, and refrigeration in the “off” position. Set the fan switch to “manual” and set speed at 12 Hertz. Check the fpm (feet per minute) velocities using an anemometer at the duct openings in the front, middle, and end of the plenum. Adjust the speed so velocities are 250 to 350 fpm."
+      },
+      {
+        "n": 13,
+        "title": "Using the Frequency Drive on the Sprout-nip Machine",
+        "text": "Determine how many storage ventilation fans you will need for the application. Locate the storage ventilation fan frequency drives or contactors and turn the power off. Using either frequency drive or contactor, locate the load side wiring that goes to each of the ventilation fans. Connect the SN Frequency Drive to the load side of each fan that will be in operation. Turn the SN Frequency Drive on and adjust the ventilation fan speed to the same velocities - 250 to 350 fpm."
+      },
+      {
+        "n": 14,
+        "title": "Inspect Potatoes",
+        "text": "Check the top of the potato pile in all bays. Check for any issues such as: peeping, sprouting, moisture conditions, breakdown, rot, hot spots, odors, etc. and note on your pretreat form. Check pulp temperatures and place a white Agri-Stor flag in the spot that is sampled. Also check for any circulation fans or heaters on top of the pile and make sure they are turned off.",
+        "questions": [
+          {
+            "id": "fans_on",
+            "label": "Were fans on?"
+          },
+          {
+            "id": "heaters_on",
+            "label": "Were heaters on?"
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "title": "Fogging Tube",
+        "text": "Connect the 4-inch stainless steel fogging tube to the machine. Depending on the distance into the storage plenum – you may need to use two, three, or more sections. Place the end of the fogging tube directly in the center of the plenum in the same direction that the air is flowing. Anytime the fogging tube goes through a wall or door, use a double-walled heat collar. Also, where the fogging tube is placed close to any combustible materials, make sure to wrap the fogging tube with a high temperature heat blanket."
+      },
+      {
+        "n": 16,
+        "title": "Starting the Machine",
+        "text": "Insert the 200 to 1,000-degree barrel thermometer in the port on the tip of the burner. Turn on the blower, spark, and burner - in that specific order. Now, open the vapor valve on the propane tank. The temperature should begin to rise. When the temperature is above 500 degrees, open the liquid valve on the propane tank and close the vapor valve. Using the Red Pressure Valve, adjust heat to 750 degrees. Let the fogging tubes warm up for 5 to 10 minutes."
+      },
+      {
+        "n": 17,
+        "title": "Starting Chemical Pump",
+        "text": "Turn the pump switch to the reverse position as machine is warming up. Set the pump speed at 5. This speed may need to be adjusted as sprout nip pellets are being pumped into the burner at a rate of 60 to 70-LBS per hour. After machine is warmed up - also very important that the pump head and hose inside the Melter cabinet are warmed up - then turn the pump switch to “forward” and with pellets being pumped, set the temperature to 650 degrees and maintain this temperature throughout the application."
+      },
+      {
+        "n": 18,
+        "title": "Loading and Monitoring Machine",
+        "text": "Add sprout-nip pellets as needed throughout application and maintain at least 20-LBS liquid sprout-nip in the tank. Keep the lid of the melting cabinet closed and only open when adding sprout-nip pellets. Monitor machine throughout application by keeping chemical flowing, checking for any leaks in chemical tubing, and watching for any significant change in temperature on the barrel thermometer. Also, monitor the process and discharge temperature which are located on the digital display."
+      },
+      {
+        "n": 19,
+        "title": "Shutting down the Machine",
+        "text": "When tank is empty and no more sprout-nip is being pumped into the burner, set the pump switch to reverse. Close the liquid valve on the propane tank and wait until the temperature begins to drop. Let the machine cool down."
+      },
+      {
+        "n": 20,
+        "title": "Flushing the pump and hoses",
+        "text": "Place the suction end of the pump tubing into your cleaning solvent. Switch the pump to “forward” and watch for solvent to enter the cooled down burner, reverse pump. Do this at least 3 times to clear out any sprout-nip residue in the hose."
+      },
+      {
+        "n": 21,
+        "title": "Turning off the Machine",
+        "text": "Turn the pump to the “off” position. Turn off Burner, Spark, and Blower in that specific order."
+      },
+      {
+        "n": 22,
+        "title": "Recirculating Ventilation Fans",
+        "text": "Let ventilation fans recirculate for 30 to 45 minutes or until fog has settled out some."
+      },
+      {
+        "n": 23,
+        "title": "Clean Up",
+        "text": "After fog has settled out - turn off the ventilation system, put on your respirator, and remove the fogging tube and place back on the truck. If Frequency Drive on the Sprout-nip machine was used, then remove cords and set system back up as it was before application. Turn ventilation fans on for 10 seconds and blow off any sprout-nip residue from the fan blades. Turn ventilation fans off and use water to spray off ventilation fans, climacell, refrigeration coils, and floors. Replace fan guard(s). Close all bypasses for ClimaCell and refrigeration coils - if they were opened before application."
+      },
+      {
+        "n": 24,
+        "title": "Control Panel and Frequency Drives",
+        "text": "Return the Control Panel and Frequency Drives settings back to what they were when you arrived at the storage. Start the system and check fan rotation."
+      },
+      {
+        "n": 25,
+        "title": "Re-Starting Ventilation System",
+        "text": "Reset system to turn back on within 4 to 5 hours after application."
+      },
+      {
+        "n": 26,
+        "title": "Walk Through",
+        "text": "Check all areas to be sure nothing is left behind and clean up the electrical room."
+      },
+      {
+        "n": 27,
+        "title": "Always turn off lights",
+        "text": ""
+      }
     ]
-   },
-   {
-    "n": 3,
-    "title": "Fogging Port",
-    "text": "Locate the fogging port on the storage and position application truck to line up with the fogging port."
-   },
-   {
-    "n": 4,
-    "title": "Ventilation System",
-    "text": "Turn the ventilation system off inside the control room at the control panel. Check the plenum and make sure climacell and plenum are dry. If they are not dry, contact your supervisor as application may need to wait."
-   },
-   {
-    "n": 5,
-    "title": "Fire Extinguisher",
-    "text": "Set Fire Extinguisher beside the truck."
-   },
-   {
-    "n": 6,
-    "title": "Power",
-    "text": "Locate power for the sprout-nip machine. The sprout-nip machine can be operated at either 240V or 480V. Confirm voltage using voltage tester. Once voltage is confirmed either 240V or 480V then connect power cord from the sprout-nip machine to the disconnect/receptacle on the fan house. Set the 240/480V switch located on the outside of the sprout-nip machine electrical panel to the correct voltage. Turn the power on and check for correct phase at the phase monitor. If the phase is not correct, disconnect power at the disconnect/receptacle on the fan house and switch any two phases and then reconnect the power and check phase monitor again. Once the correct phase is established, then turn all the breakers on which are located inside the electrical panel. Next - pull emergency switch out and turn blower on and test correct rotation of the blower."
-   },
-   {
-    "n": 7,
-    "title": "CIPC Melter Box",
-    "text": "Turn switches for the top and bottom heater elements to the “hand” position. Pour in 20-LBS of Sprout-Nip Pellets to begin melting pellets. Close top lid to begin warming cabinet."
-   },
-   {
-    "n": 8,
-    "title": "Fan Guards",
-    "text": "Locate the ventilation fans in the fan house and remove front fan guards. Turn power off to ventilation fans before removing front guards."
-   },
-   {
-    "n": 9,
-    "title": "Climacell",
-    "text": "Locate the climacell and determine where the bypass needs to be opened. Some climacell bypasses can be slid open. Others may have bypass doors on the sides or above the climacell."
-   },
-   {
-    "n": 10,
-    "title": "Refrigeration",
-    "text": "Determine if the storage has refrigeration and locate the refrigeration evaporator coils. Find the bypass doors for the evaporator coils and securely open."
-   },
-   {
-    "n": 11,
-    "title": "Plenum Bypass",
-    "text": "Make sure any bypasses at the end of the plenum are closed."
-   },
-   {
-    "n": 12,
-    "title": "Using the Storage Frequency Drives",
-    "text": "Locate the Frequency Drives for the ventilation fans and determine if you will be using them for the application. If that is the case, then you will want to control the speed from the storage control panel. Take note of the current control panel settings – then set the control panel so the fresh-air doors switch is in the “off” position. Also, turn the switches for the climacell, humidifiers, and refrigeration in the “off” position. Set the fan switch to “manual” and set speed at 12 Hertz. Check the fpm (feet per minute) velocities using an anemometer at the duct openings in the front, middle, and end of the plenum. Adjust the speed so velocities are 250 to 350 fpm."
-   },
-   {
-    "n": 13,
-    "title": "Using the Frequency Drive on the Sprout-nip Machine",
-    "text": "Determine how many storage ventilation fans you will need for the application. Locate the storage ventilation fan frequency drives or contactors and turn the power off. Using either frequency drive or contactor, locate the load side wiring that goes to each of the ventilation fans. Connect the SN Frequency Drive to the load side of each fan that will be in operation. Turn the SN Frequency Drive on and adjust the ventilation fan speed to the same velocities - 250 to 350 fpm."
-   },
-   {
-    "n": 14,
-    "title": "Inspect Potatoes",
-    "text": "Check the top of the potato pile in all bays. Check for any issues such as: peeping, sprouting, moisture conditions, breakdown, rot, hot spots, odors, etc. and note on your pretreat form. Check pulp temperatures and place a white Agri-Stor flag in the spot that is sampled. Also check for any circulation fans or heaters on top of the pile and make sure they are turned off.",
-    "questions": [
-     {
-      "id": "fans_on",
-      "label": "Were fans on?"
-     },
-     {
-      "id": "heaters_on",
-      "label": "Were heaters on?"
-     }
+  },
+  "post": {
+    "title": "Departure Check",
+    "steps": [
+      {
+        "n": 1,
+        "title": "Notice",
+        "text": "The correct chemical notice is posted on the exterior door."
+      },
+      {
+        "n": 2,
+        "title": "Port Cover",
+        "text": "The sprout nip port (if any) is covered with a cap."
+      },
+      {
+        "n": 3,
+        "title": "System",
+        "text": "The system and/or breakers have been set back to the original settings."
+      },
+      {
+        "n": 4,
+        "title": "Climacell",
+        "text": "Climacell is clean and the bypass is closed with all pipes and hoses hooked back up."
+      },
+      {
+        "n": 5,
+        "title": "Fans",
+        "text": "Fans are clean and fan screens have been properly secured."
+      },
+      {
+        "n": 6,
+        "title": "Plenum",
+        "text": "Plenum is clean and all ducts/duct fans are adjusted and working according to pre-treatment."
+      },
+      {
+        "n": 7,
+        "title": "Pile Fans",
+        "text": "Pile fans/heaters are working according to pre-treatment."
+      },
+      {
+        "n": 8,
+        "title": "Refrigeration",
+        "text": "Refrigeration coils are clean, and the bypass is set to pre-treatment."
+      },
+      {
+        "n": 9,
+        "title": "Sensors",
+        "text": "All sensors in plenum are clean."
+      },
+      {
+        "n": 10,
+        "title": "Tools/Trash",
+        "text": "No tools or trash was left in/or around storage after treatment."
+      }
     ]
-   },
-   {
-    "n": 15,
-    "title": "Fogging Tube",
-    "text": "Connect the 4-inch stainless steel fogging tube to the machine. Depending on the distance into the storage plenum – you may need to use two, three, or more sections. Place the end of the fogging tube directly in the center of the plenum in the same direction that the air is flowing. Anytime the fogging tube goes through a wall or door, use a double-walled heat collar. Also, where the fogging tube is placed close to any combustible materials, make sure to wrap the fogging tube with a high temperature heat blanket."
-   },
-   {
-    "n": 16,
-    "title": "Starting the Machine",
-    "text": "Insert the 200 to 1,000-degree barrel thermometer in the port on the tip of the burner. Turn on the blower, spark, and burner - in that specific order. Now, open the vapor valve on the propane tank. The temperature should begin to rise. When the temperature is above 500 degrees, open the liquid valve on the propane tank and close the vapor valve. Using the Red Pressure Valve, adjust heat to 750 degrees. Let the fogging tubes warm up for 5 to 10 minutes."
-   },
-   {
-    "n": 17,
-    "title": "Starting Chemical Pump",
-    "text": "Turn the pump switch to the reverse position as machine is warming up. Set the pump speed at 5. This speed may need to be adjusted as sprout nip pellets are being pumped into the burner at a rate of 60 to 70-LBS per hour. After machine is warmed up - also very important that the pump head and hose inside the Melter cabinet are warmed up - then turn the pump switch to “forward” and with pellets being pumped, set the temperature to 650 degrees and maintain this temperature throughout the application."
-   },
-   {
-    "n": 18,
-    "title": "Loading and Monitoring Machine",
-    "text": "Add sprout-nip pellets as needed throughout application and maintain at least 20-LBS liquid sprout-nip in the tank. Keep the lid of the melting cabinet closed and only open when adding sprout-nip pellets. Monitor machine throughout application by keeping chemical flowing, checking for any leaks in chemical tubing, and watching for any significant change in temperature on the barrel thermometer. Also, monitor the process and discharge temperature which are located on the digital display."
-   },
-   {
-    "n": 19,
-    "title": "Shutting down the Machine",
-    "text": "When tank is empty and no more sprout-nip is being pumped into the burner, set the pump switch to reverse. Close the liquid valve on the propane tank and wait until the temperature begins to drop. Let the machine cool down."
-   },
-   {
-    "n": 20,
-    "title": "Flushing the pump and hoses",
-    "text": "Place the suction end of the pump tubing into your cleaning solvent. Switch the pump to “forward” and watch for solvent to enter the cooled down burner, reverse pump. Do this at least 3 times to clear out any sprout-nip residue in the hose."
-   },
-   {
-    "n": 21,
-    "title": "Turning off the Machine",
-    "text": "Turn the pump to the “off” position. Turn off Burner, Spark, and Blower in that specific order."
-   },
-   {
-    "n": 22,
-    "title": "Recirculating Ventilation Fans",
-    "text": "Let ventilation fans recirculate for 30 to 45 minutes or until fog has settled out some."
-   },
-   {
-    "n": 23,
-    "title": "Clean Up",
-    "text": "After fog has settled out - turn off the ventilation system, put on your respirator, and remove the fogging tube and place back on the truck. If Frequency Drive on the Sprout-nip machine was used, then remove cords and set system back up as it was before application. Turn ventilation fans on for 10 seconds and blow off any sprout-nip residue from the fan blades. Turn ventilation fans off and use water to spray off ventilation fans, climacell, refrigeration coils, and floors. Replace fan guard(s). Close all bypasses for ClimaCell and refrigeration coils - if they were opened before application."
-   },
-   {
-    "n": 24,
-    "title": "Control Panel and Frequency Drives",
-    "text": "Return the Control Panel and Frequency Drives settings back to what they were when you arrived at the storage. Start the system and check fan rotation."
-   },
-   {
-    "n": 25,
-    "title": "Re-Starting Ventilation System",
-    "text": "Reset system to turn back on within 4 to 5 hours after application."
-   },
-   {
-    "n": 26,
-    "title": "Walk Through",
-    "text": "Check all areas to be sure nothing is left behind and clean up the electrical room."
-   },
-   {
-    "n": 27,
-    "title": "Always turn off lights",
-    "text": ""
-   }
-  ]
- },
- "post": {
-  "title": "Post Treatment Check List",
-  "steps": [
-   {
-    "n": 1,
-    "title": "Notice",
-    "text": "The correct chemical notice is posted on the exterior door."
-   },
-   {
-    "n": 2,
-    "title": "Port Cover",
-    "text": "The sprout nip port (if any) is covered with a cap."
-   },
-   {
-    "n": 3,
-    "title": "System",
-    "text": "The system and/or breakers have been set back to the original settings."
-   },
-   {
-    "n": 4,
-    "title": "Climacell",
-    "text": "Climacell is clean and the bypass is closed with all pipes and hoses hooked back up."
-   },
-   {
-    "n": 5,
-    "title": "Fans",
-    "text": "Fans are clean and fan screens have been properly secured."
-   },
-   {
-    "n": 6,
-    "title": "Plenum",
-    "text": "Plenum is clean and all ducts/duct fans are adjusted and working according to pre-treatment."
-   },
-   {
-    "n": 7,
-    "title": "Pile Fans",
-    "text": "Pile fans/heaters are working according to pre-treatment."
-   },
-   {
-    "n": 8,
-    "title": "Refrigeration",
-    "text": "Refrigeration coils are clean, and the bypass is set to pre-treatment."
-   },
-   {
-    "n": 9,
-    "title": "Sensors",
-    "text": "All sensors in plenum are clean."
-   },
-   {
-    "n": 10,
-    "title": "Tools/Trash",
-    "text": "No tools or trash was left in/or around storage after treatment."
-   }
-  ]
- }
+  }
 }
