@@ -22,9 +22,10 @@ export default function Login() {
   return (
     <div className="center-screen">
       <form className="auth" onSubmit={submit}>
-        <div className="ask-tag">
+        <div className="login-brand">
+          <img src="/agri-stor-logo.png" alt="Agri-Stor Company" width="120" height="73" />
           <h1>Applicator Hub</h1>
-          <p>Labels, SOPs and equipment manuals, answered on your phone.</p>
+          <p>Product reference cards and processing settings.</p>
         </div>
         <div className="panel">
           <h2 style={{ marginBottom: 14 }}>Sign in</h2>

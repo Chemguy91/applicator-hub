@@ -1,27 +1,8 @@
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { supabase, configured } from "./supabase.js";
 import Login from "./pages/Login.jsx";
-import Ask from "./pages/Ask.jsx";
-import Library from "./pages/Library.jsx";
-const Manage = lazy(() => import("./pages/Manage.jsx"));
-
-const Icon = {
-  ask: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
-    </svg>
-  ),
-  library: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4h4M9 12h7M9 16h7" />
-    </svg>
-  ),
-  manage: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
-    </svg>
-  ),
-};
+import Reference from "./pages/Reference.jsx";
+const TeamPage = lazy(() => import("./pages/Team.jsx"));
 
 function ChangePassword({ onDone, fullScreen }) {
   const [pw, setPw] = useState("");
@@ -38,7 +19,7 @@ function ChangePassword({ onDone, fullScreen }) {
     else onDone(true);
   };
   const form = (
-    <form className="auth panel" onSubmit={save} style={fullScreen ? undefined : { maxWidth: "none", marginBottom: 20 }}>
+    <form className="panel pw-panel" onSubmit={save}>
       <h2 style={{ marginBottom: 12 }}>Change your password</h2>
       <div className="field">
         <label htmlFor="npw">New password</label>
@@ -55,17 +36,24 @@ function ChangePassword({ onDone, fullScreen }) {
       </div>
     </form>
   );
-  return fullScreen ? <div className="center-screen">{form}</div> : form;
+  return fullScreen ? <div className="center-screen"><div className="auth">{form}</div></div> : form;
 }
 
 export default function App() {
   const [session, setSession] = useState(undefined);
   const [profile, setProfile] = useState(null);
-  const [tab, setTab] = useState(() => (location.hash.slice(1) || "ask"));
-  const [pendingQuestion, setPendingQuestion] = useState(null);
+  const [view, setView] = useState(() => (location.hash === "#/team" ? "team" : "ref"));
   const [recovering, setRecovering] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
   const [toast, setToast] = useState(null);
+  const menuRef = useRef(null);
+
+  // Close the account menu when tapping anywhere else.
+  useEffect(() => {
+    const close = (e) => { if (menuRef.current?.open && !menuRef.current.contains(e.target)) menuRef.current.open = false; };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
 
   useEffect(() => {
     if (!configured) return;
@@ -77,6 +65,12 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const onHash = () => setView(location.hash === "#/team" ? "team" : "ref");
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
   const loadProfile = async () => {
     if (!session) return setProfile(null);
     const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
@@ -84,13 +78,11 @@ export default function App() {
   };
   useEffect(() => { loadProfile(); }, [session?.user?.id]);
 
-  useEffect(() => { history.replaceState(null, "", `#${tab}`); window.scrollTo(0, 0); }, [tab]);
-
   if (!configured) {
     return (
       <div className="center-screen"><div className="auth panel">
         <h2>Almost there</h2>
-        <p className="muted" style={{ marginTop: 8 }}>This copy of Applicator Hub isn't connected to its database yet.</p>
+        <p className="muted" style={{ marginTop: 8 }}>This copy of the hub isn't connected to its database yet.</p>
       </div></div>
     );
   }
@@ -101,60 +93,56 @@ export default function App() {
 
   if (profile.role === "pending") {
     return (
-      <div className="center-screen"><div className="auth">
-        <div className="ask-tag"><h1>No access right now</h1></div>
-        <div className="panel">
-          <p><strong>{profile.email}</strong> doesn't have access to the hub at the moment. Ask your manager to turn it back on.</p>
-          <div className="btn-row" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={loadProfile}>Check again</button>
-            <button className="btn secondary" onClick={() => supabase.auth.signOut()}>Sign out</button>
-          </div>
+      <div className="center-screen"><div className="auth panel">
+        <h2>No access right now</h2>
+        <p style={{ marginTop: 8 }}><strong>{profile.email}</strong> doesn't have access to the hub at the moment. Ask your manager to turn it back on.</p>
+        <div className="btn-row" style={{ marginTop: 16 }}>
+          <button className="btn" onClick={loadProfile}>Check again</button>
+          <button className="btn secondary" onClick={() => supabase.auth.signOut()}>Sign out</button>
         </div>
       </div></div>
     );
   }
 
   const isAdmin = profile.role === "admin";
-  const tabs = [
-    { id: "ask", label: "Ask" },
-    { id: "library", label: "Library" },
-    ...(isAdmin ? [{ id: "manage", label: "Manage" }] : []),
-  ];
-  const current = tabs.some((t) => t.id === tab) ? tab : "ask";
 
   return (
     <>
-      <div className="shell">
-        <header className="topbar">
-          <div className="brand"><img src="/icon.svg" alt="" />Applicator Hub</div>
-          <div>
-            <button className="link-btn" onClick={() => setChangingPw((v) => !v)}>Password</button>
-            <button className="link-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
-          </div>
-        </header>
+      <header className="appbar">
+        <div className="appbar-inner">
+          <a className="brand" href="#/" aria-label="Applicator Hub, all products">
+            <img src="/agri-stor-logo.png" alt="" width="64" height="39" />
+            <span className="brand-text">
+              <span className="brand-name">Applicator Hub</span>
+              <span className="brand-sub">Agri-Stor Companies</span>
+            </span>
+          </a>
+          <nav className="appbar-links">
+            {isAdmin && <a className="link-btn" href="#/team" aria-current={view === "team" ? "page" : undefined}>Team</a>}
+            <details className="account" ref={menuRef}>
+              <summary className="link-btn">Account</summary>
+              <div className="account-menu">
+                <span className="who">{profile.email}</span>
+                <button className="link-btn" onClick={() => { menuRef.current.open = false; setChangingPw(true); window.scrollTo(0, 0); }}>Change password</button>
+                <button className="link-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
+              </div>
+            </details>
+          </nav>
+        </div>
+      </header>
+      <main className="shell">
         {changingPw && (
           <ChangePassword onDone={(saved) => { setChangingPw(false); if (saved) { setToast("Password changed."); setTimeout(() => setToast(null), 3000); } }} />
         )}
         {toast && <p className="notice" role="status" style={{ marginBottom: 16 }}>{toast}</p>}
-        {current === "ask" && (
-          <Ask profile={profile} initialQuestion={pendingQuestion} onConsumed={() => setPendingQuestion(null)} />
-        )}
-        {current === "library" && <Library />}
-        {current === "manage" && isAdmin && (
+        {view === "team" && isAdmin ? (
           <Suspense fallback={<div className="thinking"><span className="spinner" />Loading…</div>}>
-            <Manage profile={profile} onAsk={(q) => { setPendingQuestion(q); setTab("ask"); }} />
+            <TeamPage me={profile} onBack={() => { location.hash = "#/"; }} />
           </Suspense>
+        ) : (
+          <Reference />
         )}
-      </div>
-      <nav className="tabbar" aria-label="Main">
-        <div className="tabbar-inner">
-          {tabs.map((t) => (
-            <button key={t.id} className="tab" aria-current={current === t.id ? "page" : undefined} onClick={() => setTab(t.id)}>
-              {Icon[t.id]}{t.label}
-            </button>
-          ))}
-        </div>
-      </nav>
+      </main>
     </>
   );
 }

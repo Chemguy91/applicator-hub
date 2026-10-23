@@ -1,15 +1,16 @@
 # Applicator Hub
 
-A phone-first web app for Agri-Stor applicators. Admins upload labels, SDS sheets, SOPs and equipment manuals; applicators ask questions in plain words and get a short answer with links to the exact source pages, or browse the document library.
+A phone-first reference site for Agri-Stor applicators: one tile per product, each opening the full product reference card with its Sprout-Nip processing settings (tip temperature, volume per hour, airflow).
 
-## How it works
+## Where the content lives
 
-- **web/** — React (Vite) app, deployed on Vercel. Sign-in, Ask, Library, and an admin-only Manage screen (upload, team approvals, question log).
-- **supabase/migrations/** — database: documents, searchable passages (with keyword + meaning search), question log, user roles, file storage, and row-level security.
-- **supabase/functions/ingest** — indexes uploaded documents (admins only).
-- **supabase/functions/ask** — finds the best-matching passages and, if `ANTHROPIC_API_KEY` is set, writes an answer that cites them. Without the key it returns matching passages only.
+- **web/src/data/cards.json** — all 14 product cards (from *Thermal Application Reference Cards*) and the processing settings (from the *Processing Temps* sheet, "At The Tip of The Sprout-Nip Machine"). Values are copied exactly as written. CIPC combos are stored under Aceto Shield Pellets; the "Storox/Perox" line applies to both Storox 2.0 and Perox AG. Products not on the sheet show "Not on the processing temperature sheet yet."
+- **web/src/pages/Reference.jsx** — tiles, product-type tabs, search, and the card view.
+- **web/src/pages/Team.jsx** — admin screen for adding people, resetting passwords and removing access.
 
-Text is pulled out of PDFs and Word files in the admin's browser, split into ~900-character passages, and each passage is embedded with Supabase's built-in `gte-small` model. Scanned PDFs with no text layer need OCR before upload.
+To change a card or a setting, edit `cards.json` and push; Vercel redeploys.
+
+The Supabase document-search tables and the `ingest`/`ask` functions from the first version are still deployed but no longer used by the site.
 
 ## Accounts and roles
 

@@ -1,0 +1,530 @@
+[
+ {
+  "name": "1,4 ZAP",
+  "ingredient": "1-Octanol 99.0%",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "An aerosol-grade sprout eliminator based on 1-octanol (99%), applied as a thermal fog.",
+  "does": "Knocks back sprouts that have already started growing on stored tubers, resetting sprout control partway through the storage season.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 4-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "1,4 Zap",
+   "tip_temp_f": 450,
+   "volume": "10 GALS/Hour",
+   "airflow": "200-250 CFM"
+  },
+  "id": "1-4-zap",
+  "group": "sprout",
+  "shutdown": "standby-4"
+ },
+ {
+  "name": "1,4SIGHT",
+  "ingredient": "1,4-Dimethylnaphthalene (DMN) 97.4%",
+  "tags": [
+   "Sprout Inhibitor",
+   "Cold Fog / Thermal Fog"
+  ],
+  "what": "An aerosol-grade formulation of 1,4-dimethylnaphthalene (DMN 97.4%), a dormancy enhancer that occurs naturally in potatoes, cleared for both cold-fog and thermal-fog application.",
+  "does": "Applied as a cold or thermal fog through the storage’s ventilation system to enhance and extend natural tuber dormancy, suppressing sprout growth through the storage season.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 24-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": null,
+  "id": "1-4sight",
+  "group": "sprout",
+  "shutdown": "standby-24"
+ },
+ {
+  "name": "ACETO SHIELD PELLETS",
+  "ingredient": "Chlorpropham (CIPC)",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "A pelleted formulation of chlorpropham (CIPC), the long-standing industry-standard sprout inhibitor, marketed as Aceto Shield Pellets.",
+  "does": "Applied as a thermal fog to prevent sprouting through extended storage.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 4-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Shield Pellets (CIPC)",
+   "tip_temp_f": 650,
+   "volume": "60-70 LBS/Hour",
+   "airflow": "200-300 CFM",
+   "combos": [
+    {
+     "sheet_name": "CIPC/1,4 Zap Combo",
+     "tip_temp_f": 475,
+     "volume": "10 GALS/Hour",
+     "airflow": "200-300 CFM"
+    },
+    {
+     "sheet_name": "CIPC/Smart Block Combo",
+     "tip_temp_f": 475,
+     "volume": "60-70 LBS/Hour",
+     "airflow": "500-600 CFM"
+    }
+   ]
+  },
+  "id": "aceto-shield-pellets",
+  "group": "sprout",
+  "shutdown": "standby-4"
+ },
+ {
+  "name": "AMPLIFY",
+  "ingredient": "DIPN (diisopropylnaphthalene)",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "Amplify II, an aerosol-grade thermal-fog sprout inhibitor built on 2,6-diisopropylnaphthalene (DIPN, 99.83%).",
+  "does": "Fogged into the storage before natural dormancy ends and before sprouting starts, once bruises and cuts have healed, to suppress sprouting on processing and fresh-market potatoes for a limited period; not labeled for use on seed potatoes.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 4-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Amplify",
+   "tip_temp_f": 650,
+   "volume": "60-70 LBS/Hour",
+   "airflow": "200-300 CFM"
+  },
+  "id": "amplify",
+  "group": "sprout",
+  "shutdown": "standby-4"
+ },
+ {
+  "name": "DMN",
+  "ingredient": "1,4-dimethylnaphthalene (DMN)",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "A thermal-fog formulation of 1,4-dimethylnaphthalene, a compound naturally occurring in potatoes.",
+  "does": "Inhibits sprout development during storage as an alternative to chlorpropham-based products.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 24-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "DMN",
+   "tip_temp_f": 450,
+   "volume": "5 GALS/Hour",
+   "airflow": "200-300 CFM"
+  },
+  "id": "dmn",
+  "group": "sprout",
+  "shutdown": "standby-24"
+ },
+ {
+  "name": "FRESH PACK 100",
+  "ingredient": "Clove Oil 100%",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "Fresh Pack 100 — the full-strength formulation in the Fresh Pack clove-oil sprout-inhibitor line (100% clove oil, no carrier). Labeled only for forced-air distribution (thermal fogging) through the storage duct system — this product has no on-line/spray application on its label.",
+  "does": "Suppresses sprouting on cured, stored potatoes by fogging clove-oil vapor through the plenum and duct system, at roughly 1 gallon per 500–2,000 cwt of potatoes depending on storage conditions. Not labeled for field use, seed potatoes, or potatoes with bacterial Soft Rot or Late Blight.",
+  "procedure": "Run the recirculation fans continuously during the fogging application and for at least 1 hour afterward, or until the fog has fully settled. Keep the building ventilated for 3 to 7 days (or more) before moving potatoes out of storage.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Fresh Pack 100",
+   "tip_temp_f": 375,
+   "volume": "5 GALS/Hour",
+   "airflow": "200-300 CFM"
+  },
+  "id": "fresh-pack-100",
+  "group": "sprout",
+  "shutdown": "ventilate"
+ },
+ {
+  "name": "JETAG",
+  "ingredient": "H2O2 26.5% + PAA 4.9%",
+  "tags": [
+   "Bact / Alg / Fung",
+   "Spray / Fog"
+  ],
+  "what": "A hydrogen peroxide and peroxyacetic acid (PAA) blend sanitizer.",
+  "does": "Oxidizes and controls bacteria, algae, and fungal pathogens on tubers and storage surfaces via spray or fog.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Common Scab",
+     "Alternaria Brown Spot",
+     "Early Blight",
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": null,
+  "id": "jetag",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "PEROX AG",
+  "ingredient": "Peroxyacetic acid (PAA) based",
+  "tags": [
+   "Bact / Alg / Fung / San",
+   "Spray / Fog"
+  ],
+  "what": "A peroxyacetic-acid/hydrogen-peroxide antimicrobial solution (5.6% PAA / 26.5% H2O2) labeled for both seed and harvest potato treatment as well as general agricultural water and foliar use.",
+  "does": "Applied as a spray, dip, or fog to control bacterial and fungal storage diseases such as bacterial soft rot, ring rot, blackleg, Fusarium dry rot, late blight, and silver scurf on treated potatoes and processing water.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Blackleg",
+     "Aerial Stem Rot",
+     "Bacterial Ring Rot",
+     "Bacterial Brown Rot",
+     "Dickeya Blackleg",
+     "Common Scab",
+     "Alternaria Brown Spot",
+     "Early Blight",
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Storox/Perox",
+   "tip_temp_f": 275,
+   "volume": "10 GALS Per Hour",
+   "airflow": "500-600 CFM"
+  },
+  "id": "perox-ag",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "PUROGENE",
+  "ingredient": "3.35% sodium chlorite",
+  "tags": [
+   "Bact / Fung / San",
+   "Spray / Fog"
+  ],
+  "what": "A Bio-Cide sodium chlorite (3.35%) concentrate that must be activated with a food-grade acid (citric or phosphoric) to generate free chlorine dioxide before use.",
+  "does": "Applied as an activated spray/mist on tubers and wash water going into storage, or injected into humidification air (up to 400 ppm), to control late blight, dry rot, silver scurf, ring rot, pink rot, black scurf, and other tuber storage-rot organisms.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": null,
+  "id": "purogene",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "PUROGENE PRO",
+  "ingredient": "Concentrated sodium chlorite",
+  "tags": [
+   "Bact / Fung / San",
+   "Spray / Fog"
+  ],
+  "what": "A more concentrated (5%) sodium chlorite version of Purogene, diluted to a 2% solution and then activated with a food-grade acid to generate free chlorine dioxide.",
+  "does": "Applied the same way as Purogene — on wash water or tubers going into storage, or injected into humidification air — to control the same range of tuber storage-rot bacteria and fungi.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Purogene Pro",
+   "tip_temp_f": 150,
+   "volume": "15-20 GALS/Hour",
+   "airflow": "50% Air"
+  },
+  "id": "purogene-pro",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "SANIDATE 12.0",
+  "ingredient": "Hydrogen Peroxide + Peroxyacetic Acid",
+  "tags": [
+   "Bact / Alg / Fung",
+   "Spray / Fog"
+  ],
+  "what": "A higher-strength hydrogen peroxide (18.5%) / peroxyacetic acid (12.0%) sanitizer built for commercial and industrial water treatment as well as post-harvest use.",
+  "does": "Injected into fogging systems or process/wash water to control spoilage- and decay-causing bacteria and fungi on post-harvest fruits and vegetables, and to treat process, irrigation, and cooling water in the storage facility.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Blackleg",
+     "Aerial Stem Rot",
+     "Bacterial Ring Rot",
+     "Bacterial Brown Rot",
+     "Dickeya Blackleg",
+     "Common Scab",
+     "Alternaria Brown Spot",
+     "Early Blight",
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": null,
+  "id": "sanidate-12-0",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "SANIDATE 5.0",
+  "ingredient": "Hydrogen Peroxide + Peroxyacetic Acid",
+  "tags": [
+   "Bact / Alg / Fung",
+   "Spray / Fog"
+  ],
+  "what": "A hydrogen peroxide (23.0%) / peroxyacetic acid (5.3%) sanitizer-disinfectant labeled for both surface sanitizing and post-harvest produce treatment.",
+  "does": "Applied by spray, submersion, or fogging — including fog-tunnel and in-storage fogging of raw commodities — to control spoilage- and decay-causing bacterial and fungal organisms on post-harvest fruits and vegetables and on storage surfaces.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Blackleg",
+     "Aerial Stem Rot",
+     "Bacterial Ring Rot",
+     "Bacterial Brown Rot",
+     "Dickeya Blackleg",
+     "Common Scab",
+     "Alternaria Brown Spot",
+     "Early Blight",
+     "Powdery Mildew"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Soft Rot",
+     "Black Dot"
+    ]
+   }
+  ],
+  "processing": null,
+  "id": "sanidate-5-0",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ },
+ {
+  "name": "SMARTBLOCK",
+  "ingredient": "3-Decen-2-one 98%",
+  "tags": [
+   "Sprout Inhibitor",
+   "Thermal Fog"
+  ],
+  "what": "A reduced-risk sprout inhibitor built on 3-decen-2-one (98%), labeled for indoor use through fogging equipment only.",
+  "does": "Fogged into the storage once tubers begin “peeping,” destroying the growing point of emerging sprouts and burning off existing ones to prevent further sprouting for roughly 1–3 months depending on variety and storage temperature; not for use on seed potatoes.",
+  "procedure": "Shut off the storage humidification system at least 24 hours before application. Pile fans and heaters are turned off for the treatment and stay off afterward. On completion, hold the system in a 4-hour standby, then bring humidity, fans, and heaters back on the following day.",
+  "treats": [
+   {
+    "where": "Storage",
+    "items": [
+     "Pink Rot",
+     "Pythium Leak",
+     "Dry Rot",
+     "Sprout Suppression"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Smart-Block",
+   "tip_temp_f": 475,
+   "volume": "10 GALS/Hour",
+   "airflow": "500-600 CFM"
+  },
+  "id": "smartblock",
+  "group": "sprout",
+  "shutdown": "standby-4"
+ },
+ {
+  "name": "STOROX 2.0",
+  "ingredient": "Hydrogen Peroxide 27% + Peroxyacetic Acid 2%",
+  "tags": [
+   "Bact / Alg / Fung",
+   "Spray / Fog"
+  ],
+  "what": "A BioSafe Systems sanitizer combining hydrogen peroxide (27%) and peroxyacetic acid (2%), labeled for spray, dip, and thermal-fog application on potatoes and onions.",
+  "does": "Applied as a seed-piece or post-harvest spray/dip, or thermal-fogged into storage rooms, to suppress Fusarium dry rot, bacterial soft rot, early blight, late blight, silver scurf, and bacterial ring rot on potatoes; also used for general fogging of potatoes, onions, and other stored fruits and vegetables to control spoilage-causing bacteria and fungi.",
+  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
+  "treats": [
+   {
+    "where": "Field",
+    "items": [
+     "Early Blight",
+     "Bacterial Ring Rot"
+    ]
+   },
+   {
+    "where": "Field + Storage",
+    "items": [
+     "Late Blight",
+     "Silver Scurf"
+    ]
+   },
+   {
+    "where": "Storage",
+    "items": [
+     "Dry Rot",
+     "Soft Rot"
+    ]
+   }
+  ],
+  "processing": {
+   "sheet_name": "Storox/Perox",
+   "tip_temp_f": 275,
+   "volume": "10 GALS Per Hour",
+   "airflow": "500-600 CFM"
+  },
+  "id": "storox-2-0",
+  "group": "sanitizer",
+  "shutdown": "no-shutdown"
+ }
+]
