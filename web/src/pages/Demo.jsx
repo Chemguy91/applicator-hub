@@ -10,7 +10,7 @@ export default function Demo() {
   return (
     <div className="demo">
       <h1 className="page-title">Fog the storage</h1>
-      <p className="setup-sub">Pour, heat, fan and fog until every duct is full.</p>
+      <p className="setup-sub">Pour, heat, fan and fog until every duct is full. Each control shows the checklist step it matches.</p>
       <div ref={box} />
     </div>
   );

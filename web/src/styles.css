@@ -541,3 +541,15 @@ a.btn { text-decoration: none; }
 .sng-guided .btn.sng-pour { min-height: 40px; }
 .sng-card.compact .sng-card-title { font-size: 18px; }
 .sng-card.compact .sng-card-text { font-size: 14px; }
+
+/* ---------- demo: overfill fire ---------- */
+.btn.sng-pour.danger-full { background: #8a0012; box-shadow: 0 0 0 3px rgba(208, 2, 27, .25); }
+.sng-done.fire {
+  inset: auto 8px 8px 8px; background: rgba(43, 13, 7, .94); color: #fff; border: 2px solid #ff7a00;
+  animation: sng-fire-in .6s ease-out .5s both;
+}
+@keyframes sng-fire-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sng-done.fire { animation: none; } }
+.sng-fire-title { font-family: var(--display); font-weight: 700; font-size: 28px; color: #ffb000; margin: 0; letter-spacing: 1px; }
+.sng-fire-text { font-size: 14px; margin: 2px 0 10px; line-height: 1.35; }
+.btn.sng-ext-btn { background: #ff7a00; color: #1c0d00; font-size: 17px; min-height: 52px; }

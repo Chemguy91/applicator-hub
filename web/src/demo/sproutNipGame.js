@@ -54,7 +54,8 @@ function freshState(guided) {
     blower: false, spark: false, burner: false, pump: false, pumpDir: "off",
     setT: 300, T: 70, fpm: 0,
     cov: DUCT_Y.map(() => 0),
-    started: false, elapsed: 0, done: false, fogDone: false,
+    started: false, elapsed: 0, done: false, fogDone: false, plenumFill: 0,
+    spill: 0, fire: 0, fireT: 0, // fire: 0 none, 1 burning, 2 extinguishing, 3 out
     pumpTime: 0, tempOk: 0, fanOk: 0, dryCount: 0, wasDry: false,
     pourTimer: 0, fanAngle: 0, spawnAcc: 0, dripAcc: 0, flash: null, flashT: 0,
     warmT: 0, mistakes: 0, blowerTest: 0, solvent: 0, recirc: 0,
@@ -141,12 +142,102 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
   let fog = [];
   const drips = [];
   const potatoes = makePotatoes();
+  const spills = [];
+  const flames = [];
+  const spray = [];
   const flash = (msg) => { s.flash = msg; s.flashT = 2.8; };
+
+  // ---------- overfill fire ----------
+  function startFire() {
+    s.fire = 1; s.fireT = 0; s.pump = false; s.pumpDir = "off";
+    s.burner = false; s.spark = false; s.pending = 0; pellets.length = 0;
+    s.sc.extinguisher = true;
+    const b = el("button", { class: "btn sng-ext-btn", type: "button" }, "Use the fire extinguisher");
+    b.addEventListener("click", () => { if (s.fire === 1) { s.fire = 2; s.fireT = 0; b.disabled = true; b.textContent = "Spraying…"; } });
+    doneBox.replaceChildren(el("p", { class: "sng-fire-title" }, "FIRE!"),
+      el("p", { class: "sng-fire-text" }, "The melter overflowed and molten product hit the hot machine."), b);
+    doneBox.classList.add("fire"); doneBox.hidden = false;
+    if (guided) renderCard();
+  }
+  function fireTick(dt) {
+    s.fireT += dt;
+    const mx = MELTER.x + s.sc.truckOff;
+    const strength = s.fire === 1 ? 1 : s.fire === 2 ? Math.max(0, 1 - s.fireT / 2.2) : 0;
+    const count = Math.round(70 * strength * dt * 10) / 10;
+    for (let i = 0; i < count * 1.5 && flames.length < 260; i++) {
+      const onPool = Math.random() < 0.45;
+      flames.push({
+        x: onPool ? mx + rand(-6, MELTER.w + 30) : mx + rand(4, MELTER.w - 4),
+        y: onPool ? 166 : MELTER.y + rand(-2, 8),
+        vy: -rand(40, 90), life: 0, max: rand(0.5, 1.1), r: rand(6, 12), smoke: Math.random() < 0.25,
+      });
+    }
+    for (let i = flames.length - 1; i >= 0; i--) {
+      const f = flames[i]; f.life += dt; f.y += f.vy * dt; f.x += Math.sin(f.life * 9 + i) * dt * 14;
+      if (f.smoke) { f.r += dt * 14; f.vy *= 0.99; }
+      if (f.life > (f.smoke ? f.max * 2.4 : f.max)) flames.splice(i, 1);
+    }
+    if (s.fire === 2) {
+      for (let i = 0; i < 6; i++) spray.push({ x: 330 + rand(-2, 2), y: 142, vx: -rand(140, 230), vy: rand(-40, 20), life: 0 });
+      if (s.fireT > 2.2) { s.fire = 3; s.spill = 0; finishFire(); }
+    }
+    for (let i = spray.length - 1; i >= 0; i--) {
+      const p = spray[i]; p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 60 * dt;
+      if (p.life > 0.9) spray.splice(i, 1);
+    }
+  }
+  function finishFire() {
+    s.done = true;
+    doneBox.classList.remove("fire");
+    showDone(0, "Fire's out. Job over.", [
+      "The melter was overfilled and spilled onto the hot machine.",
+      "Pour only what the melter can hold, keep the lid closed, and stay with the machine.",
+      "Step 5: the fire extinguisher always goes beside the truck.",
+    ]);
+  }
+  function drawSpillAndFire(now) {
+    const mx = MELTER.x + s.sc.truckOff;
+    // pool of spilled product on the truck deck
+    if (s.spill > 0.2 && s.fire !== 3) {
+      const wPool = Math.min(160, 20 + s.spill * 14);
+      ctx.fillStyle = s.fire ? "#3a2a10" : "#d99a1e";
+      ctx.beginPath(); ctx.ellipse(mx + MELTER.w / 2 + 14, 168, wPool / 2, 4, 0, 0, Math.PI * 2); ctx.fill();
+      // streaks down the melter sides
+      ctx.fillStyle = "#d99a1e";
+      ctx.fillRect(mx + MELTER.w - 3, MELTER.y + 2, 3, MELTER.h - 4);
+    }
+    ctx.fillStyle = "#d99a1e";
+    for (const d of spills) { ctx.beginPath(); ctx.arc(d.x, d.y, 2.3, 0, Math.PI * 2); ctx.fill(); }
+    if (s.fire === 1 || s.fire === 2) {
+      // orange glow over the outside scene
+      const a = s.fire === 1 ? 0.18 + 0.06 * Math.sin(now / 80) : 0.1;
+      ctx.fillStyle = `rgba(255,120,0,${a})`; ctx.fillRect(0, 0, W, WALL_Y);
+    }
+    for (const f of flames) {
+      const t = f.life / f.max;
+      if (f.smoke) {
+        ctx.fillStyle = `rgba(60,55,55,${0.35 * (1 - f.life / (f.max * 2.4))})`;
+      } else {
+        const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r);
+        g.addColorStop(0, `rgba(255,236,120,${0.95 * (1 - t)})`); g.addColorStop(0.5, `rgba(255,120,0,${0.8 * (1 - t)})`); g.addColorStop(1, "rgba(200,30,0,0)");
+        ctx.fillStyle = g;
+      }
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    for (const p of spray) { ctx.beginPath(); ctx.arc(p.x, p.y, 3 + p.life * 6, 0, Math.PI * 2); ctx.fill(); }
+    if (s.fire && s.sc.extinguisher === true && !guided) {
+      roundRect(329, 140, 11, 26, 4); ctx.fillStyle = "#d0021b"; ctx.fill();
+      ctx.fillStyle = "#1c1f21"; ctx.fillRect(331, 136, 7, 5);
+    }
+  }
   const mistake = (msg) => { s.mistakes += 1; flash(msg); renderCard(); };
 
   function pour() {
-    if (s.done) return false;
-    if (s.solid + s.liquid + s.pending > MAX_LBS - POUR_LBS + 0.01) { flash("The melter is full. Pour more when it drops."); return false; }
+    if (s.done || s.fire) return false;
+    const after = s.solid + s.liquid + s.pending + POUR_LBS;
+    if (after > MAX_LBS) flash(`That's ${Math.round(after)} lbs in a ${MAX_LBS} lb melter. It's going to overflow!`);
+    else if (after > MAX_LBS - 15) flash("Careful: the melter is nearly full.");
     s.pending += POUR_LBS; s.pourTimer = 1.6; s.started = true; return true;
   }
   pourBtn.addEventListener("click", pour);
@@ -154,6 +245,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
   // In guided shutdown (step 21) the switches must go off in reverse order.
   const OFF_ORDER = ["burner", "spark", "blower"];
   function toggleSwitch(k) {
+    if (s.fire) return;
     if (guided && cur()?.offOrder) {
       if (!s[k]) return;
       const expect = OFF_ORDER.find((x) => s[x]);
@@ -178,7 +270,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
   }
   for (const k of ["blower", "spark", "burner"]) sw[k].addEventListener("click", () => toggleSwitch(k));
   pumpBtn.addEventListener("click", () => {
-    if (s.done) return;
+    if (s.done || s.fire) return;
     // Guided: off -> reverse (warming, step 17) -> forward -> reverse ...
     if (guided) { s.pumpDir = s.pumpDir === "reverse" ? "forward" : "reverse"; s.pump = s.pumpDir === "forward"; advanceIfDone(); return; }
     s.pump = !s.pump; s.pumpDir = s.pump ? "forward" : "off";
@@ -188,7 +280,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
   resetBtn.addEventListener("click", () => reset());
 
   function reset() {
-    s = freshState(guided); pellets.length = 0; fog = []; drips.length = 0;
+    s = freshState(guided); pellets.length = 0; fog = []; drips.length = 0; spills.length = 0; flames.length = 0; spray.length = 0;
     tempIn.value = "300"; fanIn.value = "0"; doneBox.hidden = true; pourBtn.disabled = false;
     if (guided) { gi = 0; ai = 0; startGuided(); }
   }
@@ -227,6 +319,24 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
       if (p.y > MELTER.y && p.x > mx + MELTER.w - 9) { p.x = mx + MELTER.w - 9; p.vx = -Math.abs(p.vx) * 0.5; }
       if (p.y >= surface) { s.solid += p.lbs; pellets.splice(i, 1); }
     }
+    // Overfilled: anything over capacity spills over the rim onto the hot truck.
+    const inMelter = s.solid + s.liquid;
+    if (inMelter > MAX_LBS) {
+      const over = inMelter - MAX_LBS;
+      const k = MAX_LBS / inMelter; s.solid *= k; s.liquid *= k;
+      s.spill += over;
+      const n = Math.ceil(over * 3);
+      for (let i = 0; i < n && spills.length < 160; i++) {
+        const side = Math.random() < 0.6 ? 1 : 0;
+        spills.push({ x: mx + (side ? MELTER.w - 2 : 2) + rand(-2, 2), y: MELTER.y + 4, vx: side ? rand(10, 40) : rand(-30, -8), vy: rand(-10, 20) });
+      }
+    }
+    for (let i = spills.length - 1; i >= 0; i--) {
+      const d = spills[i]; d.vy += 420 * dt; d.x += d.vx * dt; d.y += d.vy * dt;
+      if (d.y > 166) spills.splice(i, 1);
+    }
+    if (!s.fire && s.spill >= 9) startFire();
+    if (s.fire) fireTick(dt);
     const melt = Math.min(s.solid, 6 * dt);
     s.solid -= melt; s.liquid += melt;
 
@@ -258,18 +368,26 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     if (producing > 0) {
       s.spawnAcc += dt * 30 * producing;
       const r = reach();
-      const reachable = DUCT_Y.map((y, i) => i).filter((i) => DUCT_Y[i] - PLENUM.y <= r + 4);
+      // Fog fills the plenum first; a duct only takes fog once the fill has reached its opening.
+      const front = Math.min(s.plenumFill, r);
+      const open = DUCT_Y.map((y, i) => i).filter((i) => DUCT_Y[i] - PLENUM.y <= front + 4);
+      const filling = s.plenumFill < Math.min(r, PLENUM.h - 6) - 1;
       while (s.spawnAcc > 1 && fog.length < 520) {
         s.spawnAcc -= 1;
+        const toFill = fanRun > 0 && filling && (open.length === 0 || Math.random() < 0.75);
         fog.push({
           x: OUTLET.x + rand(-2, 2), y: OUTLET.y + 2, vx: rand(-20, 10), vy: rand(30, 60),
           r: rand(4, 7), life: 0, max: rand(6.5, 8), phase: "tube",
-          duct: fanRun > 0 && reachable.length ? reachable[Math.floor(Math.random() * reachable.length)] : -1,
-          stallY: PLENUM.y + Math.min(r, PLENUM.h - 20) * Math.random(),
+          duct: fanRun > 0 && !toFill && open.length ? open[Math.floor(Math.random() * open.length)] : -1,
+          fill: toFill,
+          stallY: PLENUM.y + Math.min(front, PLENUM.h - 20) * Math.random(),
         });
       }
     }
 
+    const maxFill = Math.min(reach(), PLENUM.h - 6);
+    if (s.plenumFill > maxFill) s.plenumFill = Math.max(maxFill, s.plenumFill - 60 * dt);
+    if (producing === 0) s.plenumFill = Math.max(0, s.plenumFill - 5 * dt);
     const pv = 100 * (fanRun / 300);
     const eff = fanRun > TARGET_FPM[1] ? 0.6 : 1;
     for (let i = fog.length - 1; i >= 0; i--) {
@@ -281,12 +399,21 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
         f.vx += (FAN.x - f.x) * dt * 2 * pull;
         f.vy = fanRun > 0 ? Math.max(f.vy, 40 + pv * 0.5) : f.vy * (1 - dt * 1.5);
         f.x += f.vx * dt; f.y += f.vy * dt;
-        if (f.y >= PLENUM.y + 4 && fanRun > 0) { f.phase = f.duct >= 0 ? "plenum" : "stall"; f.vx = 0; }
+        if (f.y >= PLENUM.y + 4 && fanRun > 0) { f.phase = f.fill ? "fill" : f.duct >= 0 ? "plenum" : "stall"; f.vx = 0; }
         if (fanRun === 0) { f.life += dt; f.y = Math.min(f.y, PLENUM.y - 4); }
       } else if (f.phase === "plenum") {
         f.y += pv * dt;
         f.x += (PLENUM.x + PLENUM.w / 2 + Math.sin(f.life * 3 + i) * 12 - f.x) * dt * 3;
         if (f.y >= DUCT_Y[f.duct]) { f.y = DUCT_Y[f.duct]; f.phase = "duct"; }
+      } else if (f.phase === "fill") {
+        // Ride down to the fill front, then add to the fog in the plenum.
+        f.y += pv * dt;
+        f.x += (PLENUM.x + PLENUM.w / 2 + Math.sin(f.life * 3 + i) * 14 - f.x) * dt * 3;
+        const frontY = PLENUM.y + s.plenumFill;
+        if (f.y >= frontY) {
+          s.plenumFill = Math.min(reach(), PLENUM.h - 6, s.plenumFill + 1.1);
+          f.phase = "stall"; f.stallY = f.y; f.max = Math.min(f.max, f.life + 2.5);
+        }
       } else if (f.phase === "stall") {
         f.y += Math.max(0, f.stallY - f.y) * dt * 1.5;
         f.x += Math.sin(f.life * 2 + i) * dt * 8;
@@ -330,7 +457,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
   const fmt = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
   function showDone(stars, title, lines) {
     doneBox.replaceChildren(
-      el("p", { class: "sng-stars", "aria-label": `${stars} of 3 stars` }, "★".repeat(stars) + "☆".repeat(3 - stars)),
+      el("p", { class: "sng-stars", "aria-label": `${stars} of 3 stars` }, stars ? "★".repeat(stars) + "☆".repeat(3 - stars) : "☆☆☆"),
       el("h3", { text: title }),
       el("ul", {}, ...lines.map((l) => el("li", { text: l }))),
       (() => { const b = el("button", { class: "btn", type: "button" }, "Play again"); b.addEventListener("click", reset); return b; })(),
@@ -340,6 +467,8 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
 
   // ---------- free-play hint ----------
   function hintText() {
+    if (s.fire === 1) return "FIRE! The overfilled melter spilled onto the hot machine. Grab the fire extinguisher!";
+    if (s.fire === 2) return "Spraying…";
     if (s.flashT > 0 && s.flash) return s.flash;
     if (s.done) return "Done. Recirculate, then clean up.";
     const lbs = s.solid + s.liquid + s.pending;
@@ -356,6 +485,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     if (!s.pump) return "Turn the pump on to send product to the burner.";
     if (lbs < 20) return "Keep at least 20 lbs in the melter. Pour more pellets.";
     if (!tempOk()) return "Bring the burner back to 650°F.";
+    if (s.plenumFill < Math.min(reach(), PLENUM.h - 6) - 2) return "Fog is filling the plenum. It moves into the ducts as the plenum fills.";
     return "Fogging. Keep the melter topped up until every duct is full.";
   }
 
@@ -684,7 +814,8 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     }
     ctx.fillStyle = total > 0 ? "rgba(208,2,27,.55)" : "rgba(0,0,0,.15)"; ctx.fillRect(MELTER.x + 6, MELTER.y + MELTER.h - 6, MELTER.w - 12, 3);
     label("MELTER", MELTER.x + MELTER.w / 2, MELTER.y - 9, { size: 11, color: colors.ink, weight: 700 });
-    if (total < 19.5 && (!guided || gi >= 6)) label("Low", MELTER.x + MELTER.w / 2, MELTER.y + 18, { color: colors.red, weight: 700, size: 11 });
+    if (total >= 90) label("FULL", MELTER.x + MELTER.w / 2, MELTER.y + 18, { color: colors.red, weight: 800, size: 13 });
+    else if (total < 19.5 && (!guided || gi >= 6)) label("Low", MELTER.x + MELTER.w / 2, MELTER.y + 18, { color: colors.red, weight: 700, size: 11 });
     ctx.restore();
 
     ctx.fillStyle = "#f2d38a";
@@ -808,6 +939,25 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
       ctx.fillRect(PLENUM.x + 8, PLENUM.y + PLENUM.h - 6, PLENUM.w - 16, 4);
       if (!sc.plenumBypassClosed) label("Bypass open", PLENUM.x + PLENUM.w / 2, PLENUM.y + PLENUM.h - 14, { size: 7, color: "#ffcc33", weight: 700 });
     }
+    if (s.plenumFill > 1) {
+      const fy = PLENUM.y + s.plenumFill;
+      const g = ctx.createLinearGradient(0, PLENUM.y, 0, fy);
+      g.addColorStop(0, "rgba(236,240,244,.62)"); g.addColorStop(Math.max(0, 1 - 18 / s.plenumFill), "rgba(236,240,244,.48)"); g.addColorStop(1, "rgba(236,240,244,0)");
+      ctx.fillStyle = g; ctx.fillRect(PLENUM.x + 2, PLENUM.y + 1, PLENUM.w - 4, s.plenumFill);
+      // soft swirl so the fill reads as fog, not paint
+      const tt = now / 900;
+      for (let k = 0; k < 6; k++) {
+        const yy = PLENUM.y + ((k * 41 + tt * 22) % Math.max(10, s.plenumFill));
+        const xx = PLENUM.x + PLENUM.w / 2 + Math.sin(tt * 2 + k) * 14;
+        const rg = ctx.createRadialGradient(xx, yy, 0, xx, yy, 18);
+        rg.addColorStop(0, "rgba(255,255,255,.18)"); rg.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(xx, yy, 18, 0, Math.PI * 2); ctx.fill();
+      }
+      const target = Math.min(reach(), PLENUM.h - 6);
+      if (s.plenumFill < target - 2) {
+        label(`Filling ${Math.round((s.plenumFill / target) * 100)}%`, PLENUM.x + PLENUM.w / 2, Math.min(fy + 10, PLENUM.y + PLENUM.h - 8), { size: 9, color: "#fff", weight: 700 });
+      }
+    }
     if (fanRun > 0) {
       const ry = PLENUM.y + Math.min(reach(), PLENUM.h - 6);
       ctx.strokeStyle = fanOk() ? "rgba(124,252,154,.7)" : "rgba(255,204,51,.8)"; ctx.setLineDash([4, 4]);
@@ -825,6 +975,7 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     if (s.recirc > 0) label(`Recirculating… ${Math.round(45 - (s.recirc / 3) * 45)} min`, 150, 360, { size: 14, color: "#fff", weight: 700 });
 
     if (sc.dim > 0) { ctx.fillStyle = `rgba(0,0,0,${0.6 * sc.dim})`; ctx.fillRect(0, WALL_Y + 3, W, H - WALL_Y); }
+    drawSpillAndFire(now);
 
     // Glowing ring on the next thing to tap.
     if (guided && !s.done) {
@@ -843,7 +994,11 @@ export function mountSproutNipGame(container, { mode = "game" } = {}) {
     const lbs = s.solid + s.liquid + s.pending;
     lbsOut.textContent = `Melter: ${Math.round(lbs)} lbs`;
     lbsOut.classList.toggle("low", lbs < 20);
-    pourBtn.disabled = s.done || lbs > MAX_LBS - POUR_LBS + 0.01;
+    pourBtn.disabled = s.done || !!s.fire;
+    const full = lbs >= 90;
+    pourBtn.classList.toggle("danger-full", full);
+    const pt = full ? "Pour 20 lbs (melter is full!)" : "Pour 20 lbs of pellets";
+    if (pourBtn.textContent !== pt) pourBtn.textContent = pt;
     for (const k of ["blower", "spark", "burner"]) sw[k].setAttribute("aria-pressed", String(s[k]));
     pumpBtn.setAttribute("aria-pressed", String(s.pumpDir === "forward"));
     pumpBtn.textContent = s.pumpDir === "forward" ? "Pump: Forward" : s.pumpDir === "reverse" ? "Pump: Reverse" : "Pump: Off";
