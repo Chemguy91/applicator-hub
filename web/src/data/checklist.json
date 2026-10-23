@@ -28,6 +28,11 @@
      {
       "id": "doors",
       "label": "Doors"
+     },
+     {
+      "id": "panel_other",
+      "label": "Other details or settings",
+      "type": "textarea"
      }
     ]
    },

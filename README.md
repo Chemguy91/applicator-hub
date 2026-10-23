@@ -13,11 +13,21 @@ To change a card or a setting, edit `cards.json` and push; Vercel redeploys.
 
 The Supabase document-search tables and the `ingest`/`ask` functions from the first version are still deployed but no longer used by the site.
 
-## Accounts and roles
+## Access codes and locations
 
-There is no self sign-up. Admins add people under **Manage → Team** (name, email, starting password, access level), reset passwords, change access, or remove people there. Everyone can change their own password from the **Password** link at the top. Access levels: applicator (search and read), admin (also uploads and manages people), no access.
+There are no personal accounts. Each location has a general code and an admin code:
 
-The `admin-users` edge function does the account work with the service key, after checking the caller is an admin.
+Locations: Washington (WA), Idaho (ID), Colorado (CO). The codes themselves are kept out of this repo.
+
+- Codes are stored only as bcrypt hashes in `private.access_codes` (not in this repo's code). The `code-login` edge function checks them in the database and signs the phone in as that code's shared account.
+- 8 wrong codes from one address in 15 minutes locks that address out for 15 minutes; 60 wrong codes overall in 15 minutes locks everyone out for 15 minutes.
+- Submitted checklists are tagged with the location by the database (from who is signed in, never the browser). Everyone sees only their own location's results; only that location's admin can edit or delete them. Edits are timestamped.
+- Signing out only signs out that phone (everyone shares the same account per code).
+
+To change a code, update its hash, e.g.
+`update private.access_codes set code_hash = extensions.crypt('1234', extensions.gen_salt('bf', 10)) where location = 'WA' and role = 'applicator';`
+
+The `ask`, `ingest` and `admin-users` functions from earlier versions are retired (return 410).
 
 ## Setup
 

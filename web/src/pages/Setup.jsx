@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CHECKLISTS from "../data/checklist.json";
+import { supabase } from "../supabase.js";
 
 const STORE_KEY = "job-checklists-v1";
 const EMPTY = { done: { setup: {}, post: {} }, fields: {} };
@@ -16,16 +17,21 @@ function load() {
   return EMPTY;
 }
 
-function Field({ id, label, value, onChange, type = "text" }) {
+export function Field({ id, label, value, onChange, type = "text" }) {
   return (
-    <label className="ck-field">
+    <label className={`ck-field ${type === "textarea" ? "ck-field-wide" : ""}`}>
       <span>{label}</span>
-      <input className="input" type={type} value={value ?? ""} onChange={(e) => onChange(id, e.target.value)} />
+      {type === "textarea" ? (
+        <textarea className="textarea" rows={4} maxLength={4000} value={value ?? ""} onChange={(e) => onChange(id, e.target.value)}
+          placeholder="Anything else about the panel, VFDs or settings" />
+      ) : (
+        <input className="input" type={type} value={value ?? ""} onChange={(e) => onChange(id, e.target.value)} />
+      )}
     </label>
   );
 }
 
-function YesNo({ id, label, fields, onChange }) {
+export function YesNo({ id, label, fields, onChange }) {
   const val = fields[id];
   return (
     <div className="ck-question">
@@ -40,8 +46,10 @@ function YesNo({ id, label, fields, onChange }) {
   );
 }
 
-export default function Checklists({ list }) {
+export default function Checklists({ list, place }) {
   const [state, setState] = useState(load);
+  const [sending, setSending] = useState(false);
+  const [sendMsg, setSendMsg] = useState(null);
   const { done, fields } = state;
   const meta = LISTS.find((l) => l.id === list) ?? LISTS[0];
   const data = CHECKLISTS[meta.id];
@@ -55,7 +63,38 @@ export default function Checklists({ list }) {
   const toggle = (n) => setState((s) => ({ ...s, done: { ...s.done, [meta.id]: { ...s.done[meta.id], [n]: !s.done[meta.id][n] } } }));
   const setField = (id, v) => setState((s) => ({ ...s, fields: { ...s.fields, [id]: v } }));
   const reset = () => {
-    if (confirm("Start a new job? This clears both checklists and every note on this phone.")) setState(EMPTY);
+    if (confirm("Clear both checklists and every note on this phone without submitting?")) setState(EMPTY);
+  };
+
+  const submit = async () => {
+    setSendMsg(null);
+    const need = [["customer", "customer name"], ["storage", "storage name"], ["applicator", "applicator name"]].filter(([k]) => !(fields[k] || "").trim());
+    if (need.length) {
+      setSendMsg({ ok: false, text: `Fill in the ${need.map(([, l]) => l).join(", ")} before submitting.` });
+      return;
+    }
+    const setupLeft = CHECKLISTS.setup.steps.length - countFor("setup");
+    const postLeft = CHECKLISTS.post.steps.length - countFor("post");
+    if ((setupLeft || postLeft) && !confirm(
+      `Not everything is checked (${setupLeft} setup step${setupLeft === 1 ? "" : "s"}, ${postLeft} post-treatment item${postLeft === 1 ? "" : "s"}). Submit anyway?`)) return;
+    setSending(true);
+    const ids = (id) => Object.entries(done[id]).filter(([, v]) => v).map(([k]) => Number(k)).sort((a, b) => a - b);
+    const { fans, refer, heat, doors, panel_other, fans_on, fans_on_where, heaters_on, heaters_on_where } = fields;
+    const { error } = await supabase.from("checklist_submissions").insert({
+      customer: fields.customer.trim(), storage: fields.storage.trim(), applicator: fields.applicator.trim(),
+      job_date: fields.date || null,
+      fields: { fans, refer, heat, doors, panel_other, fans_on, fans_on_where, heaters_on, heaters_on_where },
+      setup_done: ids("setup"), post_done: ids("post"),
+      setup_total: CHECKLISTS.setup.steps.length, post_total: CHECKLISTS.post.steps.length,
+    });
+    setSending(false);
+    if (error) {
+      setSendMsg({ ok: false, text: "Couldn't submit. Your checklist is still saved on this phone. Check your signal and try again." });
+      return;
+    }
+    setSendMsg({ ok: true, text: `Submitted the checklist for ${fields.customer.trim()}, ${fields.storage.trim()} to ${place} results. Ready for the next job.` });
+    setState(EMPTY);
+    window.scrollTo(0, 0);
   };
 
   const countFor = (id) => CHECKLISTS[id].steps.filter((s) => done[id][s.n]).length;
@@ -65,6 +104,7 @@ export default function Checklists({ list }) {
   return (
     <div className="setup">
       <h1 className="page-title">Checklists</h1>
+      <p className="setup-sub">Submitted checklists are saved to {place} results.</p>
 
       <div className="group-tabs" role="tablist" aria-label="Checklist">
         {LISTS.map((l) => (
@@ -73,6 +113,8 @@ export default function Checklists({ list }) {
           </a>
         ))}
       </div>
+
+      {sendMsg?.ok && <p className="notice" role="status" style={{ marginBottom: 14 }}>{sendMsg.text}</p>}
 
       <section className="panel ck-job">
         <div className="ck-job-fields">
@@ -103,7 +145,7 @@ export default function Checklists({ list }) {
               {s.warning && <p className="ck-warning">{s.warning}</p>}
               {s.fields && (
                 <div className="ck-grid">
-                  {s.fields.map((f) => <Field key={f.id} id={f.id} label={f.label} value={fields[f.id]} onChange={setField} />)}
+                  {s.fields.map((f) => <Field key={f.id} id={f.id} label={f.label} type={f.type} value={fields[f.id]} onChange={setField} />)}
                 </div>
               )}
               {s.questions?.map((q) => <YesNo key={q.id} {...q} fields={fields} onChange={setField} />)}
@@ -121,10 +163,16 @@ export default function Checklists({ list }) {
           <Field id="applicator" label="Applicator" value={fields.applicator} onChange={setField} />
           <Field id="date" label="Date" type="date" value={fields.date} onChange={setField} />
         </div>
-        <p className="muted small" style={{ marginTop: 4 }}>
-          Checkmarks and notes are saved on this phone only, so a reload won't lose them. Nothing is sent anywhere.
+        {sendMsg && !sendMsg.ok && <p className="notice warn" role="alert" style={{ marginBottom: 12 }}>{sendMsg.text}</p>}
+        <div className="btn-row">
+          <button className="btn" onClick={submit} disabled={sending}>
+            {sending ? <><span className="spinner" />Submitting…</> : "Submit checklist"}
+          </button>
+          <button className="btn secondary" onClick={reset} disabled={sending}>Clear without submitting</button>
+        </div>
+        <p className="muted small" style={{ marginTop: 10 }}>
+          Submitting saves both checklists to your location's results. Until then, checkmarks and notes are kept on this phone.
         </p>
-        <button className="btn secondary" style={{ marginTop: 12 }} onClick={reset}>Start a new job</button>
       </section>
     </div>
   );
