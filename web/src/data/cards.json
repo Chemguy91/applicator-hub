@@ -376,54 +376,6 @@
   "shutdown": "no-shutdown"
  },
  {
-  "name": "SANIDATE 12.0",
-  "ingredient": "Hydrogen Peroxide + Peroxyacetic Acid",
-  "tags": [
-   "Bact / Alg / Fung",
-   "Spray / Fog"
-  ],
-  "what": "A higher-strength hydrogen peroxide (18.5%) / peroxyacetic acid (12.0%) sanitizer built for commercial and industrial water treatment as well as post-harvest use.",
-  "does": "Injected into fogging systems or process/wash water to control spoilage- and decay-causing bacteria and fungi on post-harvest fruits and vegetables, and to treat process, irrigation, and cooling water in the storage facility.",
-  "procedure": "No advance shutdown or standby required. The humidification system keeps running as the applicator had it set before treatment, and pile fans and heaters are switched back on as soon as the application is complete.",
-  "treats": [
-   {
-    "where": "Field",
-    "items": [
-     "Blackleg",
-     "Aerial Stem Rot",
-     "Bacterial Ring Rot",
-     "Bacterial Brown Rot",
-     "Dickeya Blackleg",
-     "Common Scab",
-     "Alternaria Brown Spot",
-     "Early Blight",
-     "Powdery Mildew"
-    ]
-   },
-   {
-    "where": "Field + Storage",
-    "items": [
-     "Late Blight",
-     "Silver Scurf"
-    ]
-   },
-   {
-    "where": "Storage",
-    "items": [
-     "Pink Rot",
-     "Pythium Leak",
-     "Dry Rot",
-     "Soft Rot",
-     "Black Dot"
-    ]
-   }
-  ],
-  "processing": null,
-  "id": "sanidate-12-0",
-  "group": "sanitizer",
-  "shutdown": "no-shutdown"
- },
- {
   "name": "SANIDATE 5.0",
   "ingredient": "Hydrogen Peroxide + Peroxyacetic Acid",
   "tags": [

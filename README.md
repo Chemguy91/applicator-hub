@@ -4,7 +4,7 @@ A phone-first reference site for Agri-Stor applicators: one tile per product, ea
 
 ## Where the content lives
 
-- **web/src/data/cards.json** — all 14 product cards (from *Thermal Application Reference Cards*) and the processing settings (from the *Processing Temps* sheet, "At The Tip of The Sprout-Nip Machine"). Values are copied exactly as written. CIPC combos are stored under Aceto Shield Pellets; the "Storox/Perox" line applies to both Storox 2.0 and Perox AG. Products not on the sheet show "Not on the processing temperature sheet yet."
+- **web/src/data/cards.json** — all 13 product cards (Sanidate 12.0 left out on purpose) (from *Thermal Application Reference Cards*) and the processing settings (from the *Processing Temps* sheet, "At The Tip of The Sprout-Nip Machine"). Values are copied exactly as written. CIPC combos are stored under Aceto Shield Pellets; the "Storox/Perox" line applies to both Storox 2.0 and Perox AG. Products not on the sheet show "Not on the processing temperature sheet yet."
 - **web/src/pages/Reference.jsx** — tiles, product-type tabs, search, and the card view.
 - **web/src/pages/Team.jsx** — admin screen for adding people, resetting passwords and removing access.
 
