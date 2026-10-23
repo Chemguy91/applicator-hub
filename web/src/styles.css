@@ -553,3 +553,17 @@ a.btn { text-decoration: none; }
 .sng-fire-title { font-family: var(--display); font-weight: 700; font-size: 28px; color: #ffb000; margin: 0; letter-spacing: 1px; }
 .sng-fire-text { font-size: 14px; margin: 2px 0 10px; line-height: 1.35; }
 .btn.sng-ext-btn { background: #ff7a00; color: #1c0d00; font-size: 17px; min-height: 52px; }
+
+/* ---------- checklists: saved jobs in progress ---------- */
+.ck-drafts { background: var(--blue-soft); border-radius: var(--radius-lg); padding: 12px 14px; margin-bottom: 16px; }
+.ck-drafts h2 { font-family: var(--display); font-size: 20px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+.ck-drafts h2 .count { font-family: var(--body); font-size: 13px; font-weight: 700; background: var(--surface); color: var(--blue); border-radius: 999px; padding: 1px 8px; }
+.ck-drafts ul { list-style: none; margin: 0; padding: 0; }
+.ck-drafts li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--blue) 20%, transparent); }
+.ck-drafts li:first-child { border-top: 0; }
+.ck-draft-main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-wrap: anywhere; }
+.ck-draft-main strong { font-size: 17px; }
+.ck-draft-here { font-size: 13px; font-weight: 700; color: var(--blue); padding: 0 6px; }
+.btn.small { min-height: 40px; padding: 0 14px; font-size: 15px; flex: none; }
+.rs-badge.progress { background: var(--blue-soft); color: var(--blue); }
+.ck-sign .link-btn { min-height: 48px; }

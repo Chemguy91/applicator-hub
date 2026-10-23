@@ -104,6 +104,7 @@ function Row({ r, isAdmin, onDelete, onSaved }) {
           <span className="rs-meta">{r.applicator}, {fmtDate(r.job_date)}</span>
         </span>
         <span className="rs-badges">
+          {r.status === "in_progress" && <span className="rs-badge progress">In progress</span>}
           <span className={`rs-badge ${setupOk ? "ok" : "warn"}`}>Setup {r.setup_done.length}/{r.setup_total}</span>
           <span className={`rs-badge ${postOk ? "ok" : "warn"}`}>Post {r.post_done.length}/{r.post_total}</span>
         </span>
@@ -122,7 +123,7 @@ function Row({ r, isAdmin, onDelete, onSaved }) {
           <ListDetail list="setup" doneIds={r.setup_done} />
           <ListDetail list="post" doneIds={r.post_done} />
           <p className="rs-submitted">
-            Submitted {fmtTime(r.submitted_at)}{r.edited_at ? `. Edited by admin ${fmtTime(r.edited_at)}` : ""}
+            {r.status === "in_progress" ? `Started ${fmtTime(r.submitted_at)}. Last saved ${fmtTime(r.saved_at)}. Finish it from the Checklists tab` : `Submitted ${fmtTime(r.submitted_at)}`}{r.edited_at ? `. Edited by admin ${fmtTime(r.edited_at)}` : ""}
           </p>
           {isAdmin && (
             <div className="btn-row" style={{ marginTop: 10 }}>
