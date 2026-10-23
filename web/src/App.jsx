@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { supabase, configured } from "./supabase.js";
 import Login from "./pages/Login.jsx";
 import Reference from "./pages/Reference.jsx";
+import Checklists from "./pages/Setup.jsx";
 const TeamPage = lazy(() => import("./pages/Team.jsx"));
 
 function ChangePassword({ onDone, fullScreen }) {
@@ -39,10 +40,18 @@ function ChangePassword({ onDone, fullScreen }) {
   return fullScreen ? <div className="center-screen"><div className="auth">{form}</div></div> : form;
 }
 
+function viewFromHash() {
+  const h = location.hash;
+  if (h === "#/team") return "team";
+  if (h === "#/setup") return "setup";
+  if (h === "#/post") return "post";
+  return "ref";
+}
+
 export default function App() {
   const [session, setSession] = useState(undefined);
   const [profile, setProfile] = useState(null);
-  const [view, setView] = useState(() => (location.hash === "#/team" ? "team" : "ref"));
+  const [view, setView] = useState(viewFromHash);
   const [recovering, setRecovering] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
   const [toast, setToast] = useState(null);
@@ -66,10 +75,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const onHash = () => setView(location.hash === "#/team" ? "team" : "ref");
+    const onHash = () => setView(viewFromHash());
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
+  // Jump to the top when switching sections (product cards handle their own scroll).
+  useEffect(() => { window.scrollTo(0, 0); }, [view]);
 
   const loadProfile = async () => {
     if (!session) return setProfile(null);
@@ -130,6 +142,12 @@ export default function App() {
           </nav>
         </div>
       </header>
+      <nav className="sections" aria-label="Sections">
+        <div className="sections-inner">
+          <a href="#/" aria-current={view === "ref" ? "page" : undefined}>Products</a>
+          <a href="#/setup" aria-current={view === "setup" || view === "post" ? "page" : undefined}>Checklists</a>
+        </div>
+      </nav>
       <main className="shell">
         {changingPw && (
           <ChangePassword onDone={(saved) => { setChangingPw(false); if (saved) { setToast("Password changed."); setTimeout(() => setToast(null), 3000); } }} />
@@ -139,6 +157,8 @@ export default function App() {
           <Suspense fallback={<div className="thinking"><span className="spinner" />Loading…</div>}>
             <TeamPage me={profile} onBack={() => { location.hash = "#/"; }} />
           </Suspense>
+        ) : view === "setup" || view === "post" ? (
+          <Checklists list={view} />
         ) : (
           <Reference />
         )}

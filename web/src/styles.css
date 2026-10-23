@@ -310,3 +310,60 @@ body { overflow-x: hidden; }
 .stats-compact .stat-unit { font-size: 15px; vertical-align: 8px; }
 .tile-combos { font-size: 13px; font-weight: 600; color: var(--accent); }
 .brand img, .login-brand img { background: #fff; border-radius: 6px; padding: 2px; }
+
+/* ---------- section switch ---------- */
+.sections { background: var(--surface); border-bottom: 1px solid var(--line); }
+.sections-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 22px; }
+.sections a {
+  padding: 10px 0 9px; text-decoration: none; color: var(--muted); font-weight: 600;
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.sections a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--red); }
+.group-tab { text-decoration: none; color: var(--ink); display: inline-block; }
+
+/* ---------- checklists ---------- */
+.setup { max-width: 760px; margin: 0 auto; }
+.ck-job { margin-bottom: 18px; }
+.ck-job-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 12px; }
+.ck-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
+.ck-field .input { font-weight: 400; }
+.ck-progress-text { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 15px; margin-bottom: 6px; }
+.ck-progress-text a { color: var(--red); text-decoration: none; font-weight: 600; }
+.ck-complete { color: var(--red); font-weight: 700; }
+.ck-bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.ck-bar span { display: block; height: 100%; background: var(--red); transition: width .2s; }
+
+.ck-list-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.ck-steps { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ck-step {
+  display: grid; grid-template-columns: auto 1fr; gap: 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 14px 14px 14px 12px; scroll-margin-top: 120px;
+}
+.ck-step.is-done { background: var(--paper); }
+.ck-step.is-done .ck-body > h3, .ck-step.is-done .ck-body > p { color: var(--muted); }
+.ck-check { background: none; border: 0; padding: 0; cursor: pointer; align-self: start; }
+.ck-box {
+  width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+  border: 2px solid var(--ink); font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--ink);
+}
+.ck-step.is-done .ck-box { background: var(--red); border-color: var(--red); color: #fff; font-size: 22px; }
+.ck-body { min-width: 0; }
+.ck-body h3 { font-size: 20px; font-weight: 700; margin: 2px 0 4px; }
+.ck-body p { line-height: 1.5; }
+.ck-warning {
+  margin-top: 10px; font-weight: 700; color: var(--red-deep);
+  background: var(--red-soft); border-radius: 6px; padding: 6px 10px; display: inline-block;
+}
+.ck-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; margin-top: 12px; }
+@media (min-width: 640px) { .ck-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.ck-question { margin-top: 12px; }
+.ck-q-label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.yn { display: inline-flex; border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.yn button { border: 0; background: var(--surface); padding: 8px 18px; font-weight: 600; cursor: pointer; }
+.yn button + button { border-left: 1.5px solid var(--line); }
+.yn button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.ck-unnumbered .ck-box { border-radius: 8px; }
+.ck-sign { margin-bottom: 20px; }
+a.btn { text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .ck-bar span { transition: none; } }

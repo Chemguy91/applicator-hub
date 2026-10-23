@@ -6,6 +6,7 @@ A phone-first reference site for Agri-Stor applicators: one tile per product, ea
 
 - **web/src/data/cards.json** — all 13 product cards (Sanidate 12.0 left out on purpose) (from *Thermal Application Reference Cards*) and the processing settings (from the *Processing Temps* sheet, "At The Tip of The Sprout-Nip Machine"). Values are copied exactly as written. CIPC combos are stored under Aceto Shield Pellets; the "Storox/Perox" line applies to both Storox 2.0 and Perox AG. Products not on the sheet show "Not on the processing temperature sheet yet."
 - **web/src/pages/Reference.jsx** — tiles, product-type tabs, search, and the card view.
+- **web/src/data/checklist.json** + **web/src/pages/Setup.jsx** — the Checklists tab: *Sprout Inhibiting — Operational Checklist For New Machines* (27 steps, from the .docx) and the *Post Treatment Check List* (10 items). Checkmarks and write-ins are saved in the phone's browser only; "Start a new job" clears them.
 - **web/src/pages/Team.jsx** — admin screen for adding people, resetting passwords and removing access.
 
 To change a card or a setting, edit `cards.json` and push; Vercel redeploys.
