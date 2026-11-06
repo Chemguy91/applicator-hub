@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from "../supabase.js";
 import CHECKLISTS from "../data/checklist.json";
 import { Field, YesNo, StepFields, FIELD_KEYS } from "./Setup.jsx";
@@ -87,7 +88,67 @@ function Editor({ r, onCancel, onSaved }) {
   );
 }
 
-function Row({ r, isAdmin, onDelete, onSaved }) {
+// A clean paper copy of one checklist. Only shown when printing.
+function PrintSheet({ r, place }) {
+  const f = r.fields || {};
+  const yn = (k) => (f[k] === "Y" ? `Yes${f[`${k}_where`] ? `: ${f[`${k}_where`]}` : ""}` : f[k] === "N" ? "No" : "Not answered");
+  const list = (key) => {
+    const done = new Set(key === "setup" ? r.setup_done : r.post_done);
+    const steps = CHECKLISTS[key].steps;
+    return (
+      <section className="ps-list">
+        <h3>{CHECKLISTS[key].title} <span>{steps.filter((s) => done.has(s.n)).length} of {steps.length} checked</span></h3>
+        <ol className={key}>
+          {steps.map((s) => (
+            <li key={s.n} className={done.has(s.n) ? "yes" : "no"}>
+              <span className="ps-box" aria-hidden="true">{done.has(s.n) ? "✓" : ""}</span>
+              <span>{key === "setup" ? `${s.n}. ` : ""}{s.title}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    );
+  };
+  return createPortal(
+    <div className="print-sheet">
+      <header className="ps-head">
+        <img src="/agri-stor-logo.png" alt="" width="64" height="40" />
+        <div>
+          <h1>Sprout Inhibiting Checklist</h1>
+          <p>Agri-Stor Applicator Hub, {place}</p>
+        </div>
+        <p className="ps-status">{r.status === "in_progress" ? "IN PROGRESS" : "SUBMITTED"}</p>
+      </header>
+      <dl className="ps-job">
+        <div><dt>Customer</dt><dd>{r.customer}</dd></div>
+        <div><dt>Storage</dt><dd>{r.storage}</dd></div>
+        <div><dt>Applicator</dt><dd>{r.applicator}</dd></div>
+        <div><dt>Date</dt><dd>{fmtDate(r.job_date)}</dd></div>
+      </dl>
+      <section>
+        <h3>Step 2: Panel and VFD settings</h3>
+        <dl className="ps-panel">
+          {PANEL.map((x) => (
+            <div key={x.id} className={x.type === "textarea" ? "full" : ""}>
+              <dt>{x.group ? `${x.group}: ${x.label}` : x.label}</dt><dd>{f[x.id] || "—"}</dd>
+            </div>
+          ))}
+          <div className="half"><dt>Step 14: Fans on top of pile</dt><dd>{yn("fans_on")}</dd></div>
+          <div className="half"><dt>Step 14: Heaters on top of pile</dt><dd>{yn("heaters_on")}</dd></div>
+        </dl>
+      </section>
+      {list("setup")}
+      {list("post")}
+      <p className="ps-foot">
+        {r.status === "in_progress" ? `Started ${fmtTime(r.submitted_at)}. Last saved ${fmtTime(r.saved_at)}.` : `Submitted ${fmtTime(r.submitted_at)}.`}
+        {r.edited_at ? ` Edited by admin ${fmtTime(r.edited_at)}.` : ""} Printed {fmtTime(new Date())}.
+      </p>
+    </div>,
+    document.body
+  );
+}
+
+function Row({ r, isAdmin, onDelete, onSaved, onPrint }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const f = r.fields || {};
@@ -124,12 +185,11 @@ function Row({ r, isAdmin, onDelete, onSaved }) {
           <p className="rs-submitted">
             {r.status === "in_progress" ? `Started ${fmtTime(r.submitted_at)}. Last saved ${fmtTime(r.saved_at)}. Finish it from the Checklists tab` : `Submitted ${fmtTime(r.submitted_at)}`}{r.edited_at ? `. Edited by admin ${fmtTime(r.edited_at)}` : ""}
           </p>
-          {isAdmin && (
-            <div className="btn-row" style={{ marginTop: 10 }}>
-              <button className="btn secondary" onClick={() => setEditing(true)}>Edit</button>
-              <button className="link-btn rs-delete" onClick={() => onDelete(r)}>Delete</button>
-            </div>
-          )}
+          <div className="btn-row" style={{ marginTop: 10 }}>
+            <button className="btn secondary" onClick={() => onPrint(r)}>Print</button>
+            {isAdmin && <button className="btn secondary" onClick={() => setEditing(true)}>Edit</button>}
+            {isAdmin && <button className="link-btn rs-delete" onClick={() => onDelete(r)}>Delete</button>}
+          </div>
         </div>
       )}
       {open && editing && (
@@ -145,6 +205,17 @@ export default function Results({ isAdmin, place }) {
   const [rows, setRows] = useState(null);
   const [error, setError] = useState(null);
   const [q, setQ] = useState("");
+  const [printing, setPrinting] = useState(null);
+
+  // Render the paper copy, open the print dialog, then remove it.
+  useEffect(() => {
+    if (!printing) return;
+    document.body.classList.add("printing");
+    const done = () => { document.body.classList.remove("printing"); setPrinting(null); };
+    window.addEventListener("afterprint", done, { once: true });
+    const t = setTimeout(() => window.print(), 50);
+    return () => { clearTimeout(t); window.removeEventListener("afterprint", done); document.body.classList.remove("printing"); };
+  }, [printing]);
 
   const load = async () => {
     const { data, error: e } = await supabase.from("checklist_submissions").select("*").order("submitted_at", { ascending: false }).limit(500);
@@ -166,6 +237,7 @@ export default function Results({ isAdmin, place }) {
 
   return (
     <div className="results">
+      {printing && <PrintSheet r={printing} place={place} />}
       <h1 className="page-title">{place} results</h1>
       <p className="setup-sub">
         Checklists submitted with {place} codes. {isAdmin ? "As admin you can edit or delete them." : "Only an admin can change or delete them."}
@@ -179,7 +251,7 @@ export default function Results({ isAdmin, place }) {
       {rows && rows.length > 0 && (
         <>
           <p className="muted small" style={{ margin: "12px 0 8px" }}>{shown.length} of {rows.length} shown. Tap one to see details.</p>
-          <ul className="rs">{shown.map((r) => <Row key={r.id} r={r} isAdmin={isAdmin} onDelete={remove} onSaved={load} />)}</ul>
+          <ul className="rs">{shown.map((r) => <Row key={r.id} r={r} isAdmin={isAdmin} onDelete={remove} onSaved={load} onPrint={setPrinting} />)}</ul>
         </>
       )}
     </div>
